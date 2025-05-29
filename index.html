@@ -1,85 +1,119 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🎁 រង្វាន់របស់អ្នក</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f4f8;
-      color: #333;
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .spinner {
-      margin: 20px auto;
-      width: 60px;
-      height: 60px;
-      border: 6px solid #ddd;
-      border-top-color: #1e90ff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-    .reward-image {
-      margin: 30px auto;
-      max-width: 300px;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .btn {
-      display: inline-block;
-      background-color: #1e90ff;
-      color: white;
-      text-decoration: none;
-      padding: 15px 35px;
-      font-size: 20px;
-      border-radius: 12px;
-      margin-top: 25px;
-      transition: background-color 0.3s ease;
-    }
-    .btn:hover {
-      background-color: #0d6efd;
-    }
-    p.status-text {
-      font-size: 18px;
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🎁 រង្វាន់របស់អ្នក</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .spinner {
+    margin: 20px auto;
+    width: 60px;
+    height: 60px;
+    border: 6px solid #ccc;
+    border-top-color: #1e90ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  .reward-image {
+    margin: 20px auto;
+    max-width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: none;
+  }
+
+  .btn {
+    display: inline-block;
+    background-color: #1e90ff;
+    color: white;
+    padding: 15px 35px;
+    font-size: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    text-decoration: none;
+  }
+
+  .celebrate-icon {
+    font-size: 50px;
+    opacity: 0;
+    animation: popUp 0.6s ease forwards;
+  }
+
+  @keyframes popUp {
+    0% { transform: translateY(20px); opacity: 0; }
+    50% { transform: translateY(-10px); opacity: 1; }
+    100% { transform: translateY(0); }
+  }
+</style>
 </head>
 <body>
 
-  <h1>🎉 សូមស្វាគមន៍!</h1>
-  <div class="spinner" id="spinner"></div>
-  <p class="status-text" id="status-text">កំពុងរំពឹងរង្វាន់របស់អ្នក...</p>
+<h1>🎁 រង្វាន់របស់អ្នក</h1>
+<div class="spinner" id="spinner"></div>
+<p id="status-text">កំពុងរំពឹងរង្វាន់របស់អ្នក...</p>
 
-  <img class="reward-image" id="reward-img" src="https://i.imgur.com/0KFBHTB.png" alt="រង្វាន់" style="display:none;" />
+<div id="celebrate" style="height:60px;"></div>
 
-  <a href="https://t.me/anrachana_bb" target="_blank" id="join-btn" class="btn" style="display:none;">🔗 ចូលក្រុមរបស់យើង</a>
+<img id="reward-img" class="reward-image" src="" alt="រង្វាន់" />
+<a href="https://t.me/your_group_invite_link" target="_blank" class="btn" id="join-btn" style="display:none;">ចូលក្រុម</a>
 
-  <script>
-    let countdown = 5;
-    const spinner = document.getElementById('spinner');
-    const statusText = document.getElementById('status-text');
-    const rewardImg = document.getElementById('reward-img');
-    const joinBtn = document.getElementById('join-btn');
+<script>
+  const rewards = [
+    { name: "📱 iPhone 16", img: "https://i.imgur.com/KTJlEMC.jpg" },
+    { name: "🏍️ ម៉ូតូ", img: "https://i.imgur.com/fis0Ldc.jpg" },
+    { name: "🚗 ឡាន", img: "https://i.imgur.com/Dv56FxP.jpg" },
+    { name: "💵 លុយ", img: "https://i.imgur.com/hRQcB1T.jpg" }
+  ];
 
-    const interval = setInterval(() => {
-      countdown--;
-      if (countdown > 0) {
-        statusText.textContent = `⏳ សូមរង់ចាំ... ${countdown} វិនាទី`;
-      } else {
-        clearInterval(interval);
-        spinner.style.display = 'none';
-        statusText.textContent = '🎁 រង្វាន់របស់អ្នក!';
-        rewardImg.style.display = 'block';
-        joinBtn.style.display = 'inline-block';
-      }
-    }, 1000);
-  </script>
+  const spinner = document.getElementById("spinner");
+  const rewardImg = document.getElementById("reward-img");
+  const statusText = document.getElementById("status-text");
+  const celebrateDiv = document.getElementById("celebrate");
+  const joinBtn = document.getElementById("join-btn");
+
+  let countdown = 5;
+  const timer = setInterval(() => {
+    countdown--;
+    if (countdown > 0) {
+      statusText.textContent = `⏳ សូមរង់ចាំ... ${countdown} វិនាទី`;
+    } else {
+      clearInterval(timer);
+      spinner.style.display = "none";
+      startRewardLoop();
+    }
+  }, 1000);
+
+  function startRewardLoop() {
+    joinBtn.style.display = "inline-block";
+    let i = 0;
+    showReward(i);
+    setInterval(() => {
+      i = (i + 1) % rewards.length;
+      showReward(i);
+    }, 4000);
+  }
+
+  function showReward(index) {
+    const reward = rewards[index];
+    rewardImg.src = reward.img;
+    rewardImg.alt = reward.name;
+    rewardImg.style.display = "block";
+    statusText.textContent = `🎉 ${reward.name}`;
+
+    // Add animated 🎉 icon
+    celebrateDiv.innerHTML = `<div class="celebrate-icon">🎉</div>`;
+  }
+</script>
 
 </body>
 </html>
