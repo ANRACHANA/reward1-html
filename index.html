@@ -4,42 +4,48 @@
   <meta charset="UTF-8" />
   <title>រង្វាន់</title>
   <style>
-    body {
-      text-align: center;
-      font-family: 'Khmer OS Siemreap', sans-serif;
-      background: linear-gradient(135deg, #1e3c72, #2a5298); /* Blue gradient */
-      padding-top: 60px;
+    html, body {
       margin: 0;
-      overflow-x: hidden;
-      height: 100vh;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Khmer OS Siemreap', sans-serif;
+      color: white;
+    }
+
+    #background {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      color: white;
+      padding-top: 60px;
+      text-align: center;
     }
 
-    /* Instruction with bounce animation */
     .instruction {
       font-size: 60px;
       font-weight: bold;
-      padding: 20px 40px;
-      display: inline-block;
+      margin-bottom: 40px;
       user-select: none;
-      cursor: default;
       animation: bounceText 1.2s infinite;
       text-shadow: 0 0 10px #00f, 0 0 20px #00f;
       color: #aaddff;
-      margin-bottom: 40px;
     }
 
     @keyframes bounceText {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-15px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
     }
 
     #gift-box {
@@ -47,43 +53,29 @@
       cursor: pointer;
       padding: 30px;
       border-radius: 20px;
-      display: inline-block;
-      transition: box-shadow 0.3s ease;
-      user-select: none;
-      color: #00bfff;
-      text-shadow: 0 0 15px #00bfff;
       background: linear-gradient(45deg, #004080, #00bfff);
       box-shadow: 0 0 25px 5px #00bfff, 0 0 40px 10px #66ccff;
+      color: #ffffff;
+      transition: box-shadow 0.3s ease;
       animation: glowPulse 1.5s infinite alternate;
     }
 
     .glow-effect {
-      box-shadow: 0 0 40px 12px #00bfff, 0 0 50px 15px #99ddff;
-      animation: glowPulse 1s infinite alternate;
+      box-shadow: 0 0 40px 12px #ffffff, 0 0 50px 15px #99ddff;
     }
 
     @keyframes glowPulse {
-      0% {
-        box-shadow: 0 0 20px #00bfff;
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.1);
-        box-shadow: 0 0 30px #00bfff, 0 0 50px 20px #99ddff;
-      }
-      100% {
-        box-shadow: 0 0 40px #99ddff;
-        transform: scale(1);
-      }
+      0% { transform: scale(1); box-shadow: 0 0 20px #00bfff; }
+      50% { transform: scale(1.1); box-shadow: 0 0 30px #00bfff, 0 0 50px 20px #ffffff; }
+      100% { transform: scale(1); box-shadow: 0 0 40px #ffffff; }
     }
 
     #countdown {
       margin-top: 21px;
       font-size: 30px;
       font-weight: bold;
-      color: #99ddff;
+      color: #ffffff;
       text-shadow: 0 0 10px #00bfff;
-      user-select: none;
     }
 
     .reward-img {
@@ -93,16 +85,11 @@
       border-radius: 20px;
       box-shadow: 0 0 30px 10px #00bfff;
       animation: bounceImage 1.5s infinite;
-      user-select: none;
     }
 
     @keyframes bounceImage {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-15px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
     }
 
     .winner-text {
@@ -110,10 +97,22 @@
       font-weight: bold;
       display: none;
       margin-top: 15px;
-      color: #00ffff;
+      color: #ffffff;
       text-shadow: 0 0 20px #00ffff;
-      user-select: none;
-      animation: glowPulse 2s infinite alternate;
+    }
+
+    #try-again {
+      margin-top: 30px;
+      font-size: 24px;
+      padding: 12px 24px;
+      background: #00bfff;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      display: none;
+      cursor: pointer;
+      animation: bounceText 1s infinite;
     }
 
     canvas {
@@ -121,75 +120,113 @@
       top: 0;
       left: 0;
       pointer-events: none;
-      z-index: 9999;
+      z-index: -1;
     }
   </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
 </head>
 <body>
 
-  <div class="instruction">សូមចុចលើប្រអប់រង្វាន់</div>
+<div id="background"></div>
+
+<div class="content">
+  <div class="instruction" id="instruction">សូមចុចលើប្រអប់រង្វាន់</div>
   <div id="gift-box" title="ចុចដើម្បីបង្ហាញរង្វាន់">🎁</div>
   <div id="countdown"></div>
   <img src="" id="reward-image" class="reward-img" />
-  <div class="winner-text" id="winner-text">🎉 អ្នកឈ្នះរង្វាន់!</div>
+  <div class="winner-text" id="winner-text">អ្នកឈ្នះរង្វាន់!</div>
+  <button id="try-again">ចាប់លេងម្ដងទៀត </button>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <script>
-    const giftBox = document.getElementById("gift-box");
-    const countdown = document.getElementById("countdown");
-    const rewardImage = document.getElementById("reward-image");
-    const winnerText = document.getElementById("winner-text");
+<script>
+  VANTA.WAVES({
+    el: "#background",
+    mouseControls: true,
+    touchControls: true,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.0,
+    scaleMobile: 1.0,
+    color: 0x00bfff,
+    shininess: 40,
+    waveHeight: 20,
+    waveSpeed: 0.8,
+    zoom: 0.9
+  });
 
-    const rewards = [
-  { name: "iPhone", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-  { name: "ម៉ូតូ", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-  { name: "ឡាន", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-  { name: "លុយ", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" }
-];
+  const giftBox = document.getElementById("gift-box");
+  const countdown = document.getElementById("countdown");
+  const rewardImage = document.getElementById("reward-image");
+  const winnerText = document.getElementById("winner-text");
+  const tryAgain = document.getElementById("try-again");
+  const instruction = document.getElementById("instruction");
 
-    function launchFireworks() {
-      const duration = 5000;
-      const animationEnd = Date.now() + duration;
-      const interval = setInterval(() => {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) return clearInterval(interval);
-        confetti({
-          particleCount: 50,
-          spread: 360,
-          origin: { x: Math.random(), y: Math.random() - 0.2 }
-        });
-      }, 300);
-    }
+  const rewards = [
+    { name: "iPhone", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
+    { name: "ម៉ូតូ", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
+    { name: "ឡាន", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
+    { name: "លុយ", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
+    { name: "សូមព្យាយាមម្តងទៀត", img: "" }
+  ];
 
-    giftBox.addEventListener("click", () => {
-      giftBox.style.pointerEvents = "none";
-      giftBox.classList.add("glow-effect");
+  function launchFireworks() {
+    const duration = 4000;
+    const end = Date.now() + duration;
+    const interval = setInterval(() => {
+      if (Date.now() > end) return clearInterval(interval);
+      confetti({ particleCount: 50, spread: 360, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+    }, 250);
+  }
 
-      let timeLeft = 20;
+  function resetGame() {
+    giftBox.style.display = "block";
+    giftBox.style.pointerEvents = "auto";
+    countdown.textContent = "";
+    rewardImage.style.display = "none";
+    winnerText.style.display = "none";
+    tryAgain.style.display = "none";
+    instruction.textContent = "សូមចុចលើប្រអប់រង្វាន់";
+  }
+
+  giftBox.addEventListener("click", () => {
+    giftBox.style.pointerEvents = "none";
+    giftBox.classList.add("glow-effect");
+    instruction.textContent = "ត្រៀមៗ...";
+    let timeLeft = 10;
+    countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
+
+    const timer = setInterval(() => {
+      timeLeft--;
       countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        countdown.textContent = "";
 
-      const timer = setInterval(() => {
-        timeLeft--;
-        countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          countdown.textContent = "";
+        const selected = rewards[Math.floor(Math.random() * rewards.length)];
 
-          const selected = rewards[Math.floor(Math.random() * rewards.length)];
+        if (selected.name === "សូមព្យាយាមម្តងទៀត") {
+          rewardImage.style.display = "none";
+          winnerText.textContent = "សូមព្យាយាមម្តងទៀត!";
+        } else {
           rewardImage.src = selected.img;
           rewardImage.style.display = "block";
-          rewardImage.classList.add("glow-effect");
-
-          winnerText.textContent = `🎉 អ្នកឈ្នះរង្វាន់: ${selected.name}`;
-          winnerText.style.display = "block";
-          winnerText.classList.add("glow-effect");
-
-          giftBox.style.display = "none";
+          winnerText.textContent = `អ្នកឈ្នះរង្វាន់: ${selected.name}`;
           launchFireworks();
         }
-      }, 1000);
-    });
-  </script>
+
+        winnerText.style.display = "block";
+        giftBox.style.display = "none";
+        tryAgain.style.display = "inline-block";
+        instruction.textContent = "អបអរសាទរ!";
+      }
+    }, 1000);
+  });
+
+  tryAgain.addEventListener("click", resetGame);
+</script>
 </body>
 </html>
