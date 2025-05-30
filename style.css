@@ -1,0 +1,73 @@
+body {
+  text-align: center;
+  font-family: 'Khmer OS Siemreap', sans-serif;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(-45deg, #fff8e1, #ffecb3, #ffffff, #fbe9e7);
+  background-size: 400% 400%;
+  animation: backgroundGlow 8s ease infinite;
+}
+
+@keyframes backgroundGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.instruction {
+  font-size: 60px;
+  color: #e91e63;
+  font-weight: bold;
+}
+
+#gift-box {
+  font-size: 60px;
+  cursor: pointer;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 20px;
+  display: inline-block;
+  transition: box-shadow 0.3s ease;
+}
+
+.glow {
+  box-shadow: 0 0 20px 5px #ff9800, 0 0 30px 10px #ff5722;
+  animation: glowPulse 1s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { box-shadow: 0 0 10px #ff9800; }
+  to { box-shadow: 0 0 30px #ff5722; }
+}
+
+#countdown {
+  margin-top: 20px;
+  font-size: 26px;
+  color: #333;
+}
+
+.reward-img {
+  max-width: 300px;
+  margin-top: 20px;
+  display: none;
+  border-radius: 12px;
+}
+
+.winner-text {
+  font-size: 28px;
+  color: green;
+  font-weight: bold;
+  display: none;
+  margin-top: 10px;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
