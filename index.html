@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>រង្វាន់</title>
   <style>
     body {
-      text-align: center;
       font-family: 'Khmer OS Siemreap', sans-serif;
       background-color: #fff;
-      padding-top: 60px;
+      text-align: center;
+      padding-top: 2vh;
+      margin: 0;
+      font-size: 3vw; /* ជាទំហំមូលដ្ឋាន */
     }
 
     .instruction {
-      font-size: 60px;
+      font-size: 3vw; /* អក្សរធំសម្រាប់ការណែនាំ */
       color: #e91e63;
       font-weight: bold;
     }
 
     #gift-box {
-      font-size: 60px;
+      font-size: 6vw; /* ទំហំប្រអប់រង្វាន់ */
       cursor: pointer;
-      margin-top: 30px;
-      padding: 20px;
-      border-radius: 20px;
+      margin-top: 3vh;
+      padding: 3vw;
+      border-radius: 3vw;
       display: inline-block;
       transition: box-shadow 0.3s ease;
+      user-select: none;
     }
 
-    /* glow effect (បើត្រូវបានចុច) */
+    /* Glow effect */
     .glow {
-      box-shadow: 0 0 20px 5px #ff9800, 0 0 30px 10px #ff5722;
+      box-shadow: 0 0 10px 5px #ff9800, 0 0 30px 10px #ff5722;
       animation: glowPulse 1s infinite alternate;
     }
 
@@ -39,24 +42,25 @@
     }
 
     #countdown {
-      margin-top: 20px;
-      font-size: 26px;
+      margin-top: 2vh;
+      font-size: 5vw;
       color: #333;
     }
 
     .reward-img {
-      max-width: 300px;
-      margin-top: 20px;
+      max-width: 30vw;
+      margin-top: 3vh;
       display: none;
-      border-radius: 12px;
+      border-radius: 3vw;
+      user-select: none;
     }
 
     .winner-text {
-      font-size: 28px;
+      font-size: 2vw;
       color: green;
       font-weight: bold;
       display: none;
-      margin-top: 10px;
+      margin-top: 2vh;
     }
 
     canvas {
@@ -73,7 +77,7 @@
   <div class="instruction">👉 សូមចុចលើប្រអប់រង្វាន់ 👇</div>
   <div id="gift-box" title="ចុចដើម្បីបង្ហាញរង្វាន់">🎁</div>
   <div id="countdown"></div>
-  <img src="" id="reward-image" class="reward-img" />
+  <img src="" id="reward-image" class="reward-img" alt="រង្វាន់" />
   <div class="winner-text" id="winner-text">🎉 អ្នកឈ្នះរង្វាន់!</div>
 
   <!-- Confetti -->
@@ -99,9 +103,9 @@
       const interval = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
         if (timeLeft <= 0) {
-          return clearInterval(interval);
+          clearInterval(interval);
+          return;
         }
-
         confetti({
           particleCount: 50,
           spread: 360,
@@ -112,7 +116,7 @@
 
     giftBox.addEventListener("click", () => {
       giftBox.style.pointerEvents = "none";
-      giftBox.classList.add("glow"); // បញ្ចូលពន្លឺក្រោយចុច
+      giftBox.classList.add("glow");
 
       let timeLeft = 20;
       countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
