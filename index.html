@@ -5,74 +5,115 @@
   <title>រង្វាន់</title>
   <style>
     body {
-      font-family: 'Khmer OS Siemreap', sans-serif;
-      background-color: #fff;
       text-align: center;
-      padding-top: 5vh;
+      font-family: 'Khmer OS Siemreap', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298); /* Blue gradient */
+      padding-top: 60px;
       margin: 0;
-      /* ចំណុចនេះកំណត់អក្សរជា 75% */
-      font-size: clamp(9px, 6vw, 75px); /* 75% នៃ 100px */
-      user-select: none;
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      color: white;
     }
 
+    /* Instruction with bounce animation */
     .instruction {
-      font-size: clamp(11.25px, 7.5vw, 90px); /* 75% នៃ 120px */
-      color: #e91e63;
+      font-size: 60px;
       font-weight: bold;
-    }
-
-    #gift-box {
-      font-size: clamp(15px, 11.25vw, 135px); /* 75% នៃ 180px */
-      cursor: pointer;
-      margin-top: 3vh;
-      padding: clamp(7.5px, 3.75vw, 60px); /* 75% នៃ 80px */
-      border-radius: clamp(7.5px, 3.75vw, 60px);
+      padding: 20px 40px;
       display: inline-block;
-      transition: box-shadow 0.3s ease, opacity 0.5s ease;
       user-select: none;
+      cursor: default;
+      animation: bounceText 1.2s infinite;
+      text-shadow: 0 0 10px #00f, 0 0 20px #00f;
+      color: #aaddff;
+      margin-bottom: 40px;
     }
 
-    /* glow effect (បើត្រូវបានចុច) */
-    .glow {
-      box-shadow: 0 0 20px 5px #ff9800, 0 0 30px 10px #ff5722;
-      animation: glowPulse 1s infinite alternate;
-    }
-
-    @keyframes glowPulse {
-      from { box-shadow: 0 0 10px #ff9800; }
-      to { box-shadow: 0 0 30px #ff5722; }
-    }
-
-    #countdown {
-      margin-top: 2vh;
-      font-size: clamp(6px, 3.75vw, 45px); /* 75% នៃ 60px */
-      color: #333;
-    }
-
-    .reward-img {
-      max-width: 80vw;
-      margin-top: 3vh;
-      display: none;
-      border-radius: clamp(3.75px, 2.25vw, 37.5px); /* 75% នៃ 50px */
-      user-select: none;
-    }
-
-    .winner-text {
-      font-size: clamp(7.5px, 4.5vw, 67.5px); /* 75% នៃ 90px */
-      color: green;
-      font-weight: bold;
-      display: none;
-      margin-top: 2vh;
-      animation: jumpUpDown 1s ease-in-out infinite;
-    }
-
-    @keyframes jumpUpDown {
+    @keyframes bounceText {
       0%, 100% {
         transform: translateY(0);
       }
       50% {
-        transform: translateY(-20px);
+        transform: translateY(-15px);
       }
+    }
+
+    #gift-box {
+      font-size: 60px;
+      cursor: pointer;
+      padding: 30px;
+      border-radius: 20px;
+      display: inline-block;
+      transition: box-shadow 0.3s ease;
+      user-select: none;
+      color: #00bfff;
+      text-shadow: 0 0 15px #00bfff;
+      background: linear-gradient(45deg, #004080, #00bfff);
+      box-shadow: 0 0 25px 5px #00bfff, 0 0 40px 10px #66ccff;
+      animation: glowPulse 1.5s infinite alternate;
+    }
+
+    .glow-effect {
+      box-shadow: 0 0 40px 12px #00bfff, 0 0 50px 15px #99ddff;
+      animation: glowPulse 1s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 15px #00bfff;
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px #00bfff, 0 0 50px 20px #99ddff;
+      }
+      100% {
+        box-shadow: 0 0 40px #99ddff;
+        transform: scale(1);
+      }
+    }
+
+    #countdown {
+      margin-top: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #99ddff;
+      text-shadow: 0 0 10px #00bfff;
+      user-select: none;
+    }
+
+    .reward-img {
+      max-width: 300px;
+      margin-top: 30px;
+      display: none;
+      border-radius: 15px;
+      box-shadow: 0 0 30px 10px #00bfff;
+      animation: bounceImage 1.5s infinite;
+      user-select: none;
+    }
+
+    @keyframes bounceImage {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    .winner-text {
+      font-size: 36px;
+      font-weight: bold;
+      display: none;
+      margin-top: 15px;
+      color: #00ffff;
+      text-shadow: 0 0 20px #00ffff;
+      user-select: none;
+      animation: glowPulse 2s infinite alternate;
     }
 
     canvas {
@@ -80,19 +121,18 @@
       top: 0;
       left: 0;
       pointer-events: none;
-      z-index: 999;
+      z-index: 9999;
     }
   </style>
 </head>
 <body>
 
-  <div class="instruction">👉 សូមចុចលើប្រអប់រង្វាន់ 👇</div>
+  <div class="instruction">សូមចុចលើប្រអប់រង្វាន់</div>
   <div id="gift-box" title="ចុចដើម្បីបង្ហាញរង្វាន់">🎁</div>
   <div id="countdown"></div>
   <img src="" id="reward-image" class="reward-img" />
   <div class="winner-text" id="winner-text">🎉 អ្នកឈ្នះរង្វាន់!</div>
 
-  <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
@@ -102,22 +142,18 @@
     const winnerText = document.getElementById("winner-text");
 
     const rewards = [
-      { name: "iPhone", img: "https://i.imgur.com/KTJlEMC.jpg" },
-      { name: "ម៉ូតូ", img: "https://i.imgur.com/fis0Ldc.jpg" },
-      { name: "ឡាន", img: "https://i.imgur.com/Dv56FxP.jpg" },
-      { name: "លុយ", img: "https://i.imgur.com/hRQcB1T.jpg" }
+      { name: "iPhone", img: "rewards/iphone.jpg" },
+      { name: "ម៉ូតូ", img: "rewards/moto.jpg" },
+      { name: "ឡាន", img: "rewards/car.jpg" },
+      { name: "លុយ", img: "rewards/money.jpg" }
     ];
 
     function launchFireworks() {
       const duration = 5000;
       const animationEnd = Date.now() + duration;
-
       const interval = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-
+        if (timeLeft <= 0) return clearInterval(interval);
         confetti({
           particleCount: 50,
           spread: 360,
@@ -128,7 +164,7 @@
 
     giftBox.addEventListener("click", () => {
       giftBox.style.pointerEvents = "none";
-      giftBox.classList.add("glow");
+      giftBox.classList.add("glow-effect");
 
       let timeLeft = 20;
       countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
@@ -136,7 +172,6 @@
       const timer = setInterval(() => {
         timeLeft--;
         countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
-
         if (timeLeft <= 0) {
           clearInterval(timer);
           countdown.textContent = "";
@@ -144,21 +179,17 @@
           const selected = rewards[Math.floor(Math.random() * rewards.length)];
           rewardImage.src = selected.img;
           rewardImage.style.display = "block";
-          winnerText.textContent = `🎉 អ្នកឈ្នះរង្វាន់: ${selected.name}!`;
+          rewardImage.classList.add("glow-effect");
+
+          winnerText.textContent = `🎉 អ្នកឈ្នះរង្វាន់: ${selected.name}`;
           winnerText.style.display = "block";
+          winnerText.classList.add("glow-effect");
 
-          // បាត់ប្រអប់រង្វាន់ (fade out)
-          giftBox.style.transition = "opacity 0.5s ease";
-          giftBox.style.opacity = "0";
-          setTimeout(() => {
-            giftBox.style.display = "none";
-          }, 500);
-
+          giftBox.style.display = "none";
           launchFireworks();
         }
       }, 1000);
     });
   </script>
-
 </body>
 </html>
