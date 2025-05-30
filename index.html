@@ -1,89 +1,71 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-  <meta charset="UTF-8" />
-  <title>🎁 រង្វាន់</title>
+  <meta charset="UTF-8">
+  <title>រង្វាន់</title>
   <style>
     body {
+      text-align: center;
       font-family: 'Khmer OS Siemreap', sans-serif;
       background-color: #fff;
-      text-align: center;
-      padding-top: 50px;
-      overflow-x: hidden;
+      padding-top: 60px;
     }
+
     .instruction {
-      font-size: 28px;
+      font-size: 60px;
       color: #e91e63;
       font-weight: bold;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.08); opacity: 0.7; }
-      100% { transform: scale(1); opacity: 1; }
     }
 
     #gift-box {
-      font-size: 100px;
-      margin: 40px auto;
-      cursor: pointer;
-      animation: bounce 1s infinite alternate, glow 1.2s infinite alternate;
-    }
-
-    @keyframes bounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(-15px); }
-    }
-
-    @keyframes glow {
-      0% { text-shadow: 0 0 5px #ff0, 0 0 15px #ff0; }
-      100% { text-shadow: 0 0 15px #f0f, 0 0 25px #f0f; }
-    }
-
-    .reward-img {
-      max-width: 350px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      margin-top: 20px;
-      display: none;
-      animation: pop-in 1s ease forwards;
-    }
-
-    @keyframes pop-in {
-      0% { transform: scale(0.2); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .winner-text {
       font-size: 60px;
-      color: #28a745;
-      font-weight: bold;
+      cursor: pointer;
       margin-top: 30px;
-      display: none;
-      animation: bounce-text 1s infinite alternate;
+      padding: 20px;
+      border-radius: 20px;
+      display: inline-block;
+      transition: box-shadow 0.3s ease;
     }
 
-    @keyframes bounce-text {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.08); }
+    /* glow effect (បើត្រូវបានចុច) */
+    .glow {
+      box-shadow: 0 0 20px 5px #ff9800, 0 0 30px 10px #ff5722;
+      animation: glowPulse 1s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      from { box-shadow: 0 0 10px #ff9800; }
+      to { box-shadow: 0 0 30px #ff5722; }
     }
 
     #countdown {
+      margin-top: 20px;
       font-size: 26px;
-      color: #444;
-      margin-top: 25px;
+      color: #333;
+    }
+
+    .reward-img {
+      max-width: 300px;
+      margin-top: 20px;
+      display: none;
+      border-radius: 12px;
+    }
+
+    .winner-text {
+      font-size: 28px;
+      color: green;
       font-weight: bold;
+      display: none;
+      margin-top: 10px;
     }
 
-    .explode {
-      animation: explode 0.6s forwards;
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
     }
-
-    @keyframes explode {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(3) rotate(720deg); opacity: 0; }
-    }
-
   </style>
 </head>
 <body>
@@ -91,56 +73,69 @@
   <div class="instruction">👉 សូមចុចលើប្រអប់រង្វាន់ 👇</div>
   <div id="gift-box" title="ចុចដើម្បីបង្ហាញរង្វាន់">🎁</div>
   <div id="countdown"></div>
+  <img src="" id="reward-image" class="reward-img" />
+  <div class="winner-text" id="winner-text">🎉 អ្នកឈ្នះរង្វាន់!</div>
 
-  <img src="" id="reward-image" class="reward-img" alt="រង្វាន់របស់អ្នក" />
-  <div class="winner-text" id="winner-text">🥳 អ្នកឈ្នះរង្វាន់!</div>
-
-  <audio id="sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_250b9e3047.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
     const giftBox = document.getElementById("gift-box");
-    const winnerText = document.getElementById("winner-text");
+    const countdown = document.getElementById("countdown");
     const rewardImage = document.getElementById("reward-image");
-    const sound = document.getElementById("sound");
-    const countdownEl = document.getElementById("countdown");
+    const winnerText = document.getElementById("winner-text");
 
     const rewards = [
-      {name: "iPhone", img: "https://i.imgur.com/KTJlEMC.jpg"},
-      {name: "ម៉ូតូ", img: "https://i.imgur.com/fis0Ldc.jpg"},
-      {name: "ឡាន", img: "https://i.imgur.com/Dv56FxP.jpg"},
-      {name: "លុយ", img: "https://i.imgur.com/hRQcB1T.jpg"}
+      { name: "iPhone", img: "https://i.imgur.com/KTJlEMC.jpg" },
+      { name: "ម៉ូតូ", img: "https://i.imgur.com/fis0Ldc.jpg" },
+      { name: "ឡាន", img: "https://i.imgur.com/Dv56FxP.jpg" },
+      { name: "លុយ", img: "https://i.imgur.com/hRQcB1T.jpg" }
     ];
+
+    function launchFireworks() {
+      const duration = 5000;
+      const animationEnd = Date.now() + duration;
+
+      const interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        confetti({
+          particleCount: 50,
+          spread: 360,
+          origin: { x: Math.random(), y: Math.random() - 0.2 }
+        });
+      }, 300);
+    }
 
     giftBox.addEventListener("click", () => {
       giftBox.style.pointerEvents = "none";
-      countdownEl.textContent = "សូមរង់ចាំ 20 វិនាទី...";
+      giftBox.classList.add("glow"); // បញ្ចូលពន្លឺក្រោយចុច
+
       let timeLeft = 20;
+      countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
 
       const timer = setInterval(() => {
         timeLeft--;
-        countdownEl.textContent = `សូមរង់ចាំ ${timeLeft} វិនាទី...`;
+        countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
+
         if (timeLeft <= 0) {
           clearInterval(timer);
-          countdownEl.textContent = "";
+          countdown.textContent = "";
 
-          // បំបែកប្រអប់
-          giftBox.classList.add("explode");
+          const selected = rewards[Math.floor(Math.random() * rewards.length)];
+          rewardImage.src = selected.img;
+          rewardImage.style.display = "block";
+          winnerText.textContent = `🎉 អ្នកឈ្នះរង្វាន់: ${selected.name}!`;
+          winnerText.style.display = "block";
 
-          setTimeout(() => {
-            giftBox.style.display = "none";
-
-            // បង្ហាញរង្វាន់
-            const selected = rewards[Math.floor(Math.random() * rewards.length)];
-            rewardImage.src = selected.img;
-            rewardImage.style.display = "block";
-            winnerText.textContent = `🎉 អ្នកឈ្នះរង្វាន់: ${selected.name} 🎉`;
-            winnerText.style.display = "block";
-
-            sound.play();
-          }, 600);
+          launchFireworks();
         }
       }, 1000);
     });
   </script>
+
 </body>
 </html>
