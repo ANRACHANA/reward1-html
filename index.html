@@ -8,31 +8,33 @@
       font-family: 'Khmer OS Siemreap', sans-serif;
       background-color: #fff;
       text-align: center;
-      padding-top: 2vh;
+      padding-top: 5vh;
       margin: 0;
-      font-size: 3vw; /* ជាទំហំមូលដ្ឋាន */
+      /* ចំណុចនេះកំណត់អក្សរជា 75% */
+      font-size: clamp(9px, 6vw, 75px); /* 75% នៃ 100px */
+      user-select: none;
     }
 
     .instruction {
-      font-size: 3vw; /* អក្សរធំសម្រាប់ការណែនាំ */
+      font-size: clamp(11.25px, 7.5vw, 90px); /* 75% នៃ 120px */
       color: #e91e63;
       font-weight: bold;
     }
 
     #gift-box {
-      font-size: 6vw; /* ទំហំប្រអប់រង្វាន់ */
+      font-size: clamp(15px, 11.25vw, 135px); /* 75% នៃ 180px */
       cursor: pointer;
       margin-top: 3vh;
-      padding: 3vw;
-      border-radius: 3vw;
+      padding: clamp(7.5px, 3.75vw, 60px); /* 75% នៃ 80px */
+      border-radius: clamp(7.5px, 3.75vw, 60px);
       display: inline-block;
-      transition: box-shadow 0.3s ease;
+      transition: box-shadow 0.3s ease, opacity 0.5s ease;
       user-select: none;
     }
 
-    /* Glow effect */
+    /* glow effect (បើត្រូវបានចុច) */
     .glow {
-      box-shadow: 0 0 10px 5px #ff9800, 0 0 30px 10px #ff5722;
+      box-shadow: 0 0 20px 5px #ff9800, 0 0 30px 10px #ff5722;
       animation: glowPulse 1s infinite alternate;
     }
 
@@ -43,24 +45,34 @@
 
     #countdown {
       margin-top: 2vh;
-      font-size: 5vw;
+      font-size: clamp(6px, 3.75vw, 45px); /* 75% នៃ 60px */
       color: #333;
     }
 
     .reward-img {
-      max-width: 30vw;
+      max-width: 80vw;
       margin-top: 3vh;
       display: none;
-      border-radius: 3vw;
+      border-radius: clamp(3.75px, 2.25vw, 37.5px); /* 75% នៃ 50px */
       user-select: none;
     }
 
     .winner-text {
-      font-size: 2vw;
+      font-size: clamp(7.5px, 4.5vw, 67.5px); /* 75% នៃ 90px */
       color: green;
       font-weight: bold;
       display: none;
       margin-top: 2vh;
+      animation: jumpUpDown 1s ease-in-out infinite;
+    }
+
+    @keyframes jumpUpDown {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
     }
 
     canvas {
@@ -77,7 +89,7 @@
   <div class="instruction">👉 សូមចុចលើប្រអប់រង្វាន់ 👇</div>
   <div id="gift-box" title="ចុចដើម្បីបង្ហាញរង្វាន់">🎁</div>
   <div id="countdown"></div>
-  <img src="" id="reward-image" class="reward-img" alt="រង្វាន់" />
+  <img src="" id="reward-image" class="reward-img" />
   <div class="winner-text" id="winner-text">🎉 អ្នកឈ្នះរង្វាន់!</div>
 
   <!-- Confetti -->
@@ -103,9 +115,9 @@
       const interval = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
         if (timeLeft <= 0) {
-          clearInterval(interval);
-          return;
+          return clearInterval(interval);
         }
+
         confetti({
           particleCount: 50,
           spread: 360,
@@ -134,6 +146,13 @@
           rewardImage.style.display = "block";
           winnerText.textContent = `🎉 អ្នកឈ្នះរង្វាន់: ${selected.name}!`;
           winnerText.style.display = "block";
+
+          // បាត់ប្រអប់រង្វាន់ (fade out)
+          giftBox.style.transition = "opacity 0.5s ease";
+          giftBox.style.opacity = "0";
+          setTimeout(() => {
+            giftBox.style.display = "none";
+          }, 500);
 
           launchFireworks();
         }
