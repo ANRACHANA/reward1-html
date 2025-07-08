@@ -2,231 +2,414 @@
 <html lang="km">
 <head>
   <meta charset="UTF-8" />
-  <title>រង្វាន់</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>វិក្កយបត្រទឹក-ភ្លើង | Invoice App with Modal</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
   <style>
-    html, body {
+    body {
+      font-family: 'Khmer OS Battambang', sans-serif;
+      background: #f4f6f9;
       margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Khmer OS Siemreap', sans-serif;
-      color: white;
+      padding: 10px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
     }
-
-    #background {
+    h2, h3 { text-align: center; color: #333; }
+    label, input, select, button {
+      display: block;
       width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
+      margin-top: 10px;
+      font-size: 16px;
     }
-
-    .content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding-top: 60px;
-      text-align: center;
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
-
-    .instruction {
-      font-size: 60px;
-      font-weight: bold;
-      margin-bottom: 40px;
-      user-select: none;
-      animation: bounceText 1.2s infinite;
-      text-shadow: 0 0 10px #00f, 0 0 20px #00f;
-      color: #aaddff;
-    }
-
-    @keyframes bounceText {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    #gift-box {
-      font-size: 60px;
-      cursor: pointer;
-      padding: 30px;
-      border-radius: 20px;
-      background: linear-gradient(45deg, #004080, #00bfff);
-      box-shadow: 0 0 25px 5px #00bfff, 0 0 40px 10px #66ccff;
-      color: #ffffff;
-      transition: box-shadow 0.3s ease;
-      animation: glowPulse 1.5s infinite alternate;
-    }
-
-    .glow-effect {
-      box-shadow: 0 0 40px 12px #ffffff, 0 0 50px 15px #99ddff;
-    }
-
-    @keyframes glowPulse {
-      0% { transform: scale(1); box-shadow: 0 0 20px #00bfff; }
-      50% { transform: scale(1.1); box-shadow: 0 0 30px #00bfff, 0 0 50px 20px #ffffff; }
-      100% { transform: scale(1); box-shadow: 0 0 40px #ffffff; }
-    }
-
-    #countdown {
-      margin-top: 21px;
-      font-size: 30px;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 0 0 10px #00bfff;
-    }
-
-    .reward-img {
-      max-width: 300px;
-      margin-top: 30px;
-      display: none;
-      border-radius: 20px;
-      box-shadow: 0 0 30px 10px #00bfff;
-      animation: bounceImage 1.5s infinite;
-    }
-
-    @keyframes bounceImage {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    .winner-text {
-      font-size: 40px;
-      font-weight: bold;
-      display: none;
-      margin-top: 15px;
-      color: #ffffff;
-      text-shadow: 0 0 20px #00ffff;
-    }
-
-    #try-again {
-      margin-top: 30px;
-      font-size: 24px;
-      padding: 12px 24px;
-      background: #00bfff;
-      border: none;
-      border-radius: 12px;
+    button {
+      padding: 12px;
+      background: #1e88e5;
       color: white;
-      font-weight: bold;
-      display: none;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      animation: bounceText 1s infinite;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #1565c0;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    th {
+      background: #1e88e5;
+      color: white;
+    }
+    .menu {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 10px;
+    }
+    .menu button {
+      width: 48%;
+    }
+    #preview {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 20px;
+      font-size: 16px;
+      white-space: pre-line;
     }
 
-    canvas {
+    /* Modal Styles */
+    .modal {
+      display: none; 
       position: fixed;
-      top: 0;
+      z-index: 9999; 
       left: 0;
-      pointer-events: none;
-      z-index: -1;
+      top: 0;
+      width: 100%;
+      height: 100%; 
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto; 
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      position: relative;
+    }
+    .close {
+      color: #aaa;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      button {
+        font-size: 14px;
+        padding: 10px;
+      }
+      label, input, select {
+        font-size: 14px;
+      }
+      .modal-content {
+        width: 95%;
+      }
     }
   </style>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
 </head>
 <body>
 
-<div id="background"></div>
+  <div class="card" id="login-card">
+    <h2>📥 Login</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+  </div>
 
-<div class="content">
-  <div class="instruction" id="instruction">សូមចុចលើប្រអប់រង្វាន់</div>
-  <div id="gift-box" title="ចុចដើម្បីបង្ហាញរង្វាន់">🎁</div>
-  <div id="countdown"></div>
-  <img src="" id="reward-image" class="reward-img" />
-  <div class="winner-text" id="winner-text">អ្នកឈ្នះរង្វាន់!</div>
-  <button id="try-again">ចាប់លេងម្ដងទៀត </button>
-</div>
+  <div class="card" id="form-card" style="display: none;">
+    <div class="menu">
+      <button onclick="toggleView('form')">➕ បញ្ចូលវិក្កយបត្រ</button>
+      <button onclick="toggleView('history')">📋 ប្រវត្តិ</button>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <div id="form-view">
+      <h3>បញ្ចូលវិក្កយបត្រ</h3>
+      <label>ខែ</label><input type="month" id="month" />
+      <label>បន្ទប់</label>
+      <select id="room">
+        <option value="">-- ជ្រើសបន្ទប់ --</option>
+        <option value="1">បន្ទប់ ១</option>
+        <option value="2">បន្ទប់ ២</option>
+        <option value="3">បន្ទប់ ៣</option>
+        <option value="4">បន្ទប់ ៤</option>
+      </select>
+      <label>ឈ្មោះអតិថិជន</label><input type="text" id="customer-name" />
+      <label>លេខទូរស័ព្ទ</label><input type="text" id="customer-phone" />
+      <label>ទឹកចាស់</label><input type="number" id="water-old" />
+      <label>ទឹកថ្មី</label><input type="number" id="water-new" />
+      <label>ភ្លើងចាស់</label><input type="number" id="electric-old" />
+      <label>ភ្លើងថ្មី</label><input type="number" id="electric-new" />
+      <button onclick="saveData()">💾 រក្សាទុក</button>
+    </div>
+
+    <div id="history-view" style="display: none;">
+      <h3>📋 ប្រវត្តិវិក្កយបត្រ</h3>
+      <label>Filter បន្ទប់</label>
+      <select id="filter-room">
+        <option value="">-- ទាំងអស់ --</option>
+        <option value="1">បន្ទប់ ១</option>
+        <option value="2">បន្ទប់ ២</option>
+        <option value="3">បន្ទប់ ៣</option>
+        <option value="4">បន្ទប់ ៤</option>
+      </select>
+      <label>Filter ខែ</label>
+      <input type="month" id="filter-month" />
+      <button onclick="loadData()">🔍 ស្វែងរក</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>វិក្កយបត្រ</th><th>អតិថិជន</th><th>បន្ទប់</th><th>ខែ</th><th>ថ្ងៃ</th><th>បោះពុម្ព</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="invoice-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <pre id="modal-content" style="white-space: pre-wrap; font-family: 'Khmer OS Battambang', Arial; font-size: 16px;"></pre>
+      <button onclick="printModalContent()" style="background:#43a047; margin-top: 10px; width: 100%;">🖨️ បោះពុម្ពវិក្កយបត្រ</button>
+    </div>
+  </div>
 
 <script>
-  VANTA.WAVES({
-    el: "#background",
-    mouseControls: true,
-    touchControls: true,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.0,
-    scaleMobile: 1.0,
-    color: 0x00bfff,
-    shininess: 40,
-    waveHeight: 20,
-    waveSpeed: 0.8,
-    zoom: 0.9
-  });
+  const firebaseConfig = {
+    apiKey: "AIzaSyBt_ScEi_StJ0wQDP-gZwMWmy5A7HqEcXE",
+    authDomain: "invoice-77616.firebaseapp.com",
+    projectId: "invoice-77616",
+    storageBucket: "invoice-77616.appspot.com",
+    messagingSenderId: "91579214593",
+    appId: "1:91579214593:web:eca7aad598915de58ec900"
+  };
 
-  const giftBox = document.getElementById("gift-box");
-  const countdown = document.getElementById("countdown");
-  const rewardImage = document.getElementById("reward-image");
-  const winnerText = document.getElementById("winner-text");
-  const tryAgain = document.getElementById("try-again");
-  const instruction = document.getElementById("instruction");
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
 
-  const rewards = [
-    { name: "iPhone", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-    { name: "ម៉ូតូ", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-    { name: "ឡាន", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-    { name: "លុយ", img: "https://mg.emoney.com.kh:8686/mg/eweb/LuckyOceanAppBanner_websitebanner.jpg" },
-    { name: "សូមព្យាយាមម្តងទៀត", img: "" }
-  ];
-
-  function launchFireworks() {
-    const duration = 4000;
-    const end = Date.now() + duration;
-    const interval = setInterval(() => {
-      if (Date.now() > end) return clearInterval(interval);
-      confetti({ particleCount: 50, spread: 360, origin: { x: Math.random(), y: Math.random() - 0.2 } });
-    }, 250);
+  function toggleView(view) {
+    document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
+    document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
+    if (view === 'history') {
+      loadData();
+    }
   }
 
-  function resetGame() {
-    giftBox.style.display = "block";
-    giftBox.style.pointerEvents = "auto";
-    countdown.textContent = "";
-    rewardImage.style.display = "none";
-    winnerText.style.display = "none";
-    tryAgain.style.display = "none";
-    instruction.textContent = "សូមចុចលើប្រអប់រង្វាន់";
+  function login() {
+    const email = document.getElementById('email').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    if (!email || !pass) {
+      alert('សូមបញ្ចូល Email និង Password');
+      return;
+    }
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => {
+        document.getElementById('login-card').style.display = 'none';
+        document.getElementById('form-card').style.display = 'block';
+        toggleView('form');
+      })
+      .catch(err => alert(err.message));
   }
 
-  giftBox.addEventListener("click", () => {
-    giftBox.style.pointerEvents = "none";
-    giftBox.classList.add("glow-effect");
-    instruction.textContent = "ត្រៀមៗ...";
-    let timeLeft = 10;
-    countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
+  function register() {
+    const email = document.getElementById('email').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    if (!email || !pass) {
+      alert('សូមបញ្ចូល Email និង Password');
+      return;
+    }
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(() => alert('✅ បានបង្កើតគណនី សូមចូលចូល'))
+      .catch(err => alert(err.message));
+  }
 
-    const timer = setInterval(() => {
-      timeLeft--;
-      countdown.textContent = `⏳ សូមរង់ចាំ ${timeLeft} វិនាទី...`;
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        countdown.textContent = "";
+  function generateInvoiceNumber(room, month) {
+    const ym = month.replace('-', '');
+    const random = Math.floor(Math.random() * 900 + 100);
+    return `INV-${ym}-${room}-${random}`;
+  }
 
-        const selected = rewards[Math.floor(Math.random() * rewards.length)];
+  async function saveData() {
+    const room = document.getElementById('room').value;
+    const month = document.getElementById('month').value;
+    const name = document.getElementById('customer-name').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const wOld = +document.getElementById('water-old').value;
+    const wNew = +document.getElementById('water-new').value;
+    const eOld = +document.getElementById('electric-old').value;
+    const eNew = +document.getElementById('electric-new').value;
 
-        if (selected.name === "សូមព្យាយាមម្តងទៀត") {
-          rewardImage.style.display = "none";
-          winnerText.textContent = "សូមព្យាយាមម្តងទៀត!";
-        } else {
-          rewardImage.src = selected.img;
-          rewardImage.style.display = "block";
-          winnerText.textContent = `អ្នកឈ្នះរង្វាន់: ${selected.name}`;
-          launchFireworks();
-        }
+    if (!room || !month || !name || !phone || isNaN(wOld) || isNaN(wNew) || isNaN(eOld) || isNaN(eNew)) {
+      alert("សូមបំពេញទាំងអស់");
+      return;
+    }
 
-        winnerText.style.display = "block";
-        giftBox.style.display = "none";
-        tryAgain.style.display = "inline-block";
-        instruction.textContent = "អបអរសាទរ!";
+    const invoiceNo = generateInvoiceNumber(room, month);
+
+    try {
+      await db.collection('invoices').doc(invoiceNo).set({
+        invoiceNo, room, month, customerName: name, customerPhone: phone,
+        waterOld: wOld, waterNew: wNew, electricOld: eOld, electricNew: eNew,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert("✅ រក្សាទុករួច");
+      clearForm();
+    } catch (e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  function clearForm() {
+    document.getElementById('month').value = '';
+    document.getElementById('room').value = '';
+    document.getElementById('customer-name').value = '';
+    document.getElementById('customer-phone').value = '';
+    document.getElementById('water-old').value = '';
+    document.getElementById('water-new').value = '';
+    document.getElementById('electric-old').value = '';
+    document.getElementById('electric-new').value = '';
+  }
+
+  async function loadData() {
+    const tbody = document.getElementById('history-tbody');
+    tbody.innerHTML = '';
+
+    const filterRoom = document.getElementById('filter-room').value;
+    const filterMonth = document.getElementById('filter-month').value;
+
+    let query = db.collection('invoices');
+    if (filterRoom) query = query.where('room', '==', filterRoom);
+    if (filterMonth) query = query.where('month', '==', filterMonth);
+    query = query.orderBy('timestamp', 'desc');
+
+    try {
+      const snap = await query.get();
+      if (snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="6">មិនមានទិន្នន័យ</td></tr>';
+        return;
       }
-    }, 1000);
-  });
 
-  tryAgain.addEventListener("click", resetGame);
+      snap.forEach(doc => {
+        const d = doc.data();
+        const dateStr = d.timestamp?.toDate().toLocaleString() || '';
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td>${d.invoiceNo}</td>
+          <td>${d.customerName}</td>
+          <td>${d.room}</td>
+          <td>${d.month}</td>
+          <td>${dateStr}</td>
+          <td><button onclick="printInvoice(event, '${d.invoiceNo}')">🖨️</button></td>
+        `;
+
+        // When click anywhere on row except print button, show modal
+        tr.addEventListener('click', e => {
+          // Prevent triggering modal if clicking print button
+          if (e.target.tagName.toLowerCase() !== 'button') {
+            showModal(d);
+          }
+        });
+
+        tbody.appendChild(tr);
+      });
+    } catch(e) {
+      alert('Error: ' + e.message);
+    }
+  }
+
+  function showModal(data) {
+    // Calculate totals
+    const waterUsed = data.waterNew - data.waterOld;
+    const electricUsed = data.electricNew - data.electricOld;
+    const waterPrice = 3000;  
+    const electricPrice = 4000;
+    const totalWater = waterUsed * waterPrice;
+    const totalElectric = electricUsed * electricPrice;
+    const grandTotal = totalWater + totalElectric;
+
+    const dateStr = data.timestamp?.toDate().toLocaleString() || '';
+
+    const text =
+      `វិក្កយបត្រ: ${data.invoiceNo}\n` +
+      `ឈ្មោះអតិថិជន: ${data.customerName}\n` +
+      `បន្ទប់: ${data.room}\n` +
+      `ខែ: ${data.month}\n` +
+      `ថ្ងៃ: ${dateStr}\n\n` +
+      `ទឹកចាស់: ${data.waterOld}\n` +
+      `ទឹកថ្មី: ${data.waterNew}\n` +
+      `ទឹកប្រើ: ${waterUsed} យូនីត\n` +
+      `តម្លៃទឹក (រៀល/យូនីត): ${waterPrice}\n` +
+      `សរុបទឹក: ${totalWater.toLocaleString()} រៀល\n\n` +
+      `ភ្លើងចាស់: ${data.electricOld}\n` +
+      `ភ្លើងថ្មី: ${data.electricNew}\n` +
+      `ភ្លើងប្រើ: ${electricUsed} គីឡូវ៉ាត់\n` +
+      `តម្លៃភ្លើង (រៀល/គីឡូវ៉ាត់): ${electricPrice}\n` +
+      `សរុបភ្លើង: ${totalElectric.toLocaleString()} រៀល\n\n` +
+      `💰 សរុប: ${grandTotal.toLocaleString()} រៀល`;
+
+    const modal = document.getElementById('invoice-modal');
+    const content = document.getElementById('modal-content');
+    content.textContent = text;
+    modal.style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('invoice-modal').style.display = 'none';
+  }
+
+  function printModalContent() {
+    const content = document.getElementById('modal-content').textContent;
+    if (!content) {
+      alert('មិនមានខ្លឹមសារ ត្រូវបង្ហាញវិក្កយបត្រមុន');
+      return;
+    }
+    const printWindow = window.open('', '', 'width=600,height=600');
+    printWindow.document.write('<pre style="font-family: KhOS Battambang, Arial; font-size: 16px;">' + content + '</pre>');
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }
 </script>
+
 </body>
 </html>
