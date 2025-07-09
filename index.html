@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>វិក្កយបត្រទឹក-ភ្លើង | Invoice App with Modal</title>
+  <title>វិក្កយបត្រទឹក-ភ្លើង</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -14,187 +17,363 @@
     body {
       font-family: 'Khmer OS Battambang', sans-serif;
       background: #f4f6f9;
-      margin: 0;
-      padding: 10px;
       max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    h2, h3 { text-align: center; color: #333; }
-    label, input, select, button {
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-    input, select {
+      margin: 20px auto;
       padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
     }
-    button {
-      padding: 12px;
-      background: #1e88e5;
+    .pointer { cursor: pointer; }
+    .modal-content pre {
+      font-family: 'Khmer OS Battambang', Arial;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+    /* Side menu styles */
+    #menu-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #0d6efd;
       color: white;
       border: none;
+      font-size: 24px;
+      padding: 10px 15px;
       border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 20px;
+      z-index: 1050;
+      display: none;
     }
-    button:hover {
-      background: #1565c0;
+    .side-menu {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1040;
+      top: 0;
+      left: 0;
+      background-color: white;
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.2);
     }
-    .card {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    .side-menu a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #333;
+      display: block;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+    .side-menu a:hover {
+      background-color: #e3f2fd;
     }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
+    .menu-header {
       text-align: center;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    th {
-      background: #1e88e5;
+      padding: 20px 10px 10px;
+      background-color: #0d6efd;
       color: white;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
     }
-    .menu {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 10px;
+    /* Responsive for menu */
+    @media (max-width: 720px) {
+      #menu-toggle {
+        display: block;
+      }
+      .menu-buttons {
+        display: none;
+      }
     }
-    .menu button {
-      width: 48%;
-    }
-    #preview {
-      background: #e3f2fd;
-      padding: 15px;
-      border-radius: 6px;
-      margin-top: 20px;
-      font-size: 16px;
-      white-space: pre-line;
+    @media (min-width: 721px) {
+      #menu-toggle, .side-menu {
+        display: none !important;
+      }
+      .menu-buttons {
+        display: flex !important;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
     }
 
-    /* Modal Styles */
-    .modal {
-      display: none; 
-      position: fixed;
-      z-index: 9999; 
-      left: 0;
-      top: 0;
+
+#login-card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 400px;
       width: 100%;
-      height: 100%; 
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
-      padding-top: 60px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
-    .modal-content {
-      background-color: #fff;
-      margin: 5% auto; 
-      padding: 20px;
-      border: 1px solid #888;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 8px;
+
+    .password-wrapper {
       position: relative;
     }
-    .close {
-      color: #aaa;
+
+    .toggle-password {
       position: absolute;
-      right: 15px;
-      top: 10px;
-      font-size: 28px;
-      font-weight: bold;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
       cursor: pointer;
     }
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
     }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 5px;
-      }
-      button {
-        font-size: 14px;
-        padding: 10px;
-      }
-      label, input, select {
-        font-size: 14px;
-      }
-      .modal-content {
-        width: 95%;
-      }
-    }
+
   </style>
 </head>
 <body>
 
-  <div class="card" id="login-card">
-    <h2>📥 Login</h2>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Register</button>
+<!-- Menu Toggle Button -->
+<button id="menu-toggle" class="btn btn-primary" onclick="toggleMenu()">☰</button>
+
+<!-- Side Drawer Menu -->
+<div id="side-menu" class="side-menu">
+  <div class="menu-header">
+    🧑‍💼
+    <div id="user-email" style="margin-top: 5px; font-size: 15px;"></div>
+  </div>
+  <hr />
+  <a href="#" onclick="toggleView('form'); toggleMenu()">➕ បញ្ចូលវិក្កយបត្រ</a>
+  <a href="#" onclick="toggleView('history'); toggleMenu()">📋 ប្រវត្តិវិក្កយបត្រ</a>
+
+  <a href="#" onclick="toggleView('edit-customer'); toggleMenu()">👤 កែប្រែអតិថិជន</a>
+
+
+  <a href="#" onclick="logout()">🚪 ចេញ</a>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Login Card -->
+<div class="card p-4" id="login-card" style="font-family: 'Khmer OS Battambang', sans-serif;">
+  <h2 class="text-center mb-3">📥 ចូលប្រើប្រព័ន្ធ</h2>
+
+  <!-- Email -->
+  <input type="email" id="email" class="form-control mb-2" placeholder="អ៊ីម៉ែល" />
+
+  <!-- Password + Eye -->
+  <div class="mb-3 position-relative">
+    <input type="password" id="password" class="form-control pe-5" placeholder="ពាក្យសម្ងាត់" />
+    <span onclick="togglePassword()" class="position-absolute end-0 top-50 translate-middle-y me-3" style="cursor: pointer;">
+      👁️
+    </span>
   </div>
 
-  <div class="card" id="form-card" style="display: none;">
-    <div class="menu">
-      <button onclick="toggleView('form')">➕ បញ្ចូលវិក្កយបត្រ</button>
-      <button onclick="toggleView('history')">📋 ប្រវត្តិ</button>
-    </div>
+  <!-- Login Button -->
+  <button id="login-btn" class="btn btn-primary w-100 mb-2" onclick="login()">🔐 ចូល</button>
 
-    <div id="form-view">
-      <h3>បញ្ចូលវិក្កយបត្រ</h3>
-      <label>ខែ</label><input type="month" id="month" />
-      <label>បន្ទប់</label>
-      <select id="room">
-        <option value="">-- ជ្រើសបន្ទប់ --</option>
-        <option value="1">បន្ទប់ ១</option>
-        <option value="2">បន្ទប់ ២</option>
-        <option value="3">បន្ទប់ ៣</option>
-        <option value="4">បន្ទប់ ៤</option>
-      </select>
-      <label>ឈ្មោះអតិថិជន</label><input type="text" id="customer-name" />
-      <label>លេខទូរស័ព្ទ</label><input type="text" id="customer-phone" />
-      <label>ទឹកចាស់</label><input type="number" id="water-old" />
-      <label>ទឹកថ្មី</label><input type="number" id="water-new" />
-      <label>ភ្លើងចាស់</label><input type="number" id="electric-old" />
-      <label>ភ្លើងថ្មី</label><input type="number" id="electric-new" />
-      <button onclick="saveData()">💾 រក្សាទុក</button>
-    </div>
+  <!-- Register Button -->
+  <button class="btn btn-outline-secondary w-100" onclick="register()">📋 បង្កើតគណនី</button>
+</div>
 
-    <div id="history-view" style="display: none;">
-      <h3>📋 ប្រវត្តិវិក្កយបត្រ</h3>
-      <label>Filter បន្ទប់</label>
-      <select id="filter-room">
-        <option value="">-- ទាំងអស់ --</option>
-        <option value="1">បន្ទប់ ១</option>
-        <option value="2">បន្ទប់ ២</option>
-        <option value="3">បន្ទប់ ៣</option>
-        <option value="4">បន្ទប់ ៤</option>
-      </select>
-      <label>Filter ខែ</label>
-      <input type="month" id="filter-month" />
-      <button onclick="loadData()">🔍 ស្វែងរក</button>
 
-      <table>
-        <thead>
+
+
+
+<!-- Edit Customer Section -->
+<div class="card p-4" id="edit-customer-card" style="display: none;">
+  <h3 class="mb-4 text-center">👤 កែប្រែឈ្មោះអតិថិជនតាមបន្ទប់</h3>
+
+  <div class="mb-3">
+    <label for="edit-room" class="form-label">ជ្រើសបន្ទប់</label>
+    <select id="edit-room" class="form-select" onchange="loadCustomerInfo()">
+      <option value="">-- ជ្រើសបន្ទប់ --</option>
+      <option value="1">បន្ទប់ ១</option>
+      <option value="2">បន្ទប់ ២</option>
+      <option value="3">បន្ទប់ ៣</option>
+      <option value="4">បន្ទប់ ៤</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="edit-customer-name" class="form-label">ឈ្មោះអតិថិជន</label>
+    <input type="text" id="edit-customer-name" class="form-control" />
+  </div>
+
+  <div class="mb-3">
+    <label for="edit-customer-phone" class="form-label">លេខទូរស័ព្ទ</label>
+    <input type="text" id="edit-customer-phone" class="form-control" />
+  </div>
+
+  <div class="d-grid">
+    <button class="btn btn-success" onclick="updateCustomer()">💾 បញ្ចូល / កែប្រែ</button>
+
+  </div>
+
+  <!-- Customer Table -->
+  <div class="card p-4 mt-4" id="customer-list-card">
+    <h4 class="mb-3 text-center">📒 បញ្ជីអតិថិជន</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
           <tr>
-            <th>វិក្កយបត្រ</th><th>អតិថិជន</th><th>បន្ទប់</th><th>ខែ</th><th>ថ្ងៃ</th><th>បោះពុម្ព</th>
+            <th>បន្ទប់</th>
+            <th>ឈ្មោះអតិថិជន</th>
+            <th>លេខទូរស័ព្ទ</th>
+          </tr>
+        </thead>
+        <tbody id="customer-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Main Content Card -->
+<div class="card p-4" id="form-card" style="display: none;">
+  
+  <!-- Buttons menu -->
+  <div class="menu-buttons mb-3 justify-content-center">
+    <button type="button" class="btn btn-primary my-3" onclick="toggleView('form')">➕ បញ្ចូលវិក្កយបត្រ</button>
+    <button type="button" class="btn btn-success my-3" onclick="toggleView('history')">📋 ប្រវត្តិ</button>
+
+<button class="btn btn-primary my-3" onclick="loadCustomerList()">បង្ហាញអតិថិជន</button>
+
+  <button type="button" class="btn btn-outline-danger my-3"onclick="logout()">ចាក់ចេញ</button>
+  </div>
+
+  <!-- Form View -->
+  <div id="form-view">
+    <h3 class="mb-4 text-center">បញ្ចូលវិក្កយបត្រ</h3>
+    <form id="invoice-form" onsubmit="event.preventDefault(); saveData();">
+
+      <div class="mb-3">
+        <label for="month" class="form-label">ខែ</label>
+        <input type="month" id="month" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+  <label for="room" class="form-label">បន្ទប់</label>
+  <select id="room" class="form-select" onchange="autoFillCustomerInfo()">
+    <option value="">-- ជ្រើសបន្ទប់ --</option>
+    <option value="1">បន្ទប់ ១</option>
+    <option value="2">បន្ទប់ ២</option>
+    <option value="3">បន្ទប់ ៣</option>
+    <option value="4">បន្ទប់ ៤</option>
+  </select>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="water-old" class="form-label">ទឹកចាស់</label>
+          <input type="number" id="water-old" class="form-control" min="0" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="water-new" class="form-label">ទឹកថ្មី</label>
+          <input type="number" id="water-new" class="form-control" min="0" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="electric-old" class="form-label">ភ្លើងចាស់</label>
+          <input type="number" id="electric-old" class="form-control" min="0" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="electric-new" class="form-label">ភ្លើងថ្មី</label>
+          <input type="number" id="electric-new" class="form-control" min="0" />
+        </div>
+      </div>
+
+
+
+ <div class="mb-3" style="background-color: #e0f7fa; padding: 1px; border-radius: 1px;">
+  <label for="customer-name" class="form-label">ឈ្មោះអតិថិជន</label>
+  <input type="text" id="customer-name" class="form-control" readonly style="background-color: #b2ebf2;" />
+</div>
+
+<div class="mb-3" style="background-color: #e0f7fa; padding: 1px; border-radius: 1px;">
+  <label for="customer-phone" class="form-label">លេខទូរស័ព្ទ</label>
+  <input type="text" id="customer-phone" class="form-control" readonly style="background-color: #b2ebf2;" />
+</div>
+
+
+
+
+
+
+
+      <div class="d-grid gap-2">
+         <button id="save-btn" onclick="saveData()" style="width:100%; padding:10px; font-size:12px; border:none; border-radius:6px; background:#1e88e5; color:white;">💾 រក្សាទុក</button>
+         <button  type="button" class="btn btn-outline-danger" onclick="resetForm()" style="width:30%; padding:10px; font-size:10px; border:none; border-radius:6px;">♻️ កំណត់ឡើងវិញ</button>
+
+      </div>
+
+    </form>
+  </div>
+
+  <!-- History View -->
+  <div id="history-view" style="display: none;">
+    <h3 class="mb-4 text-center">📋 ប្រវត្តិវិក្កយបត្រ</h3>
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label for="filter-room" class="form-label">Filter បន្ទប់</label>
+        <select id="filter-room" class="form-select">
+          <option value="">-- ទាំងអស់ --</option>
+          <option value="1">បន្ទប់ ១</option>
+          <option value="2">បន្ទប់ ២</option>
+          <option value="3">បន្ទប់ ៣</option>
+          <option value="4">បន្ទប់ ៤</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="filter-month" class="form-label">Filter ខែ</label>
+        <input type="month" id="filter-month" class="form-control" />
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-primary w-100" onclick="loadData()">🔍 ស្វែងរក</button>
+      </div>
+    </div>
+
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+      <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-primary sticky-top">
+          <tr>
+            <th>វិក្កយបត្រ</th>
+            <th>អតិថិជន</th>
+            <th>បន្ទប់</th>
+            <th>ខែ</th>
+            <th>ថ្ងៃ</th>
+            <th>សកម្មភាព</th>
           </tr>
         </thead>
         <tbody id="history-tbody"></tbody>
@@ -202,16 +381,21 @@
     </div>
   </div>
 
-  <!-- Modal -->
-  <div id="invoice-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <pre id="modal-content" style="white-space: pre-wrap; font-family: 'Khmer OS Battambang', Arial; font-size: 16px;"></pre>
-      <button onclick="printModalContent()" style="background:#43a047; margin-top: 10px; width: 100%;">🖨️ បោះពុម្ពវិក្កយបត្រ</button>
+</div>
+
+<!-- Modal -->
+<div id="invoice-modal" class="modal" tabindex="-1" style="display:none; background-color: rgba(0,0,0,0.5); position: fixed; z-index: 1100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
+      <button type="button" class="btn-close float-end" aria-label="Close" onclick="closeModal()"></button>
+      <pre id="modal-content"></pre>
+      <button class="btn btn-success w-100 mt-3" onclick="printModalContent()">🖨️ បោះពុម្ព</button>
     </div>
   </div>
+</div>
 
 <script>
+  // Firebase config + init
   const firebaseConfig = {
     apiKey: "AIzaSyBt_ScEi_StJ0wQDP-gZwMWmy5A7HqEcXE",
     authDomain: "invoice-77616.firebaseapp.com",
@@ -220,54 +404,139 @@
     messagingSenderId: "91579214593",
     appId: "1:91579214593:web:eca7aad598915de58ec900"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
   const auth = firebase.auth();
 
+  // Toggle side menu
+  function toggleMenu() {
+    const menu = document.getElementById("side-menu");
+    menu.style.width = (menu.style.width === "250px") ? "0" : "250px";
+  }
+
+  // Logout
+  function logout() {
+    auth.signOut().then(() => {
+      alert("បានចេញពីប្រព័ន្ធ");
+      location.reload();
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+  // Toggle between form and history views
   function toggleView(view) {
-    document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
-    document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
-    if (view === 'history') {
-      loadData();
+  document.getElementById('form-card').style.display = (view === 'form' || view === 'history') ? 'block' : 'none';
+  document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
+  document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
+  document.getElementById('edit-customer-card').style.display = (view === 'edit-customer') ? 'block' : 'none';
+
+  if (view === 'history') loadData();
+  if (view === 'edit-customer') loadCustomerInfo();
+
+  // រក្សាទុក state ចុងក្រោយ
+  localStorage.setItem('currentView', view);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = passwordInput.nextElementSibling;
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.textContent = '🙈'; // បើក
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.textContent = '👁️'; // បិទ
     }
   }
 
-  function login() {
-    const email = document.getElementById('email').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    if (!email || !pass) {
-      alert('សូមបញ្ចូល Email និង Password');
-      return;
-    }
-    auth.signInWithEmailAndPassword(email, pass)
-      .then(() => {
-        document.getElementById('login-card').style.display = 'none';
-        document.getElementById('form-card').style.display = 'block';
-        toggleView('form');
-      })
-      .catch(err => alert(err.message));
-  }
+// Login
+ function login() {
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const loginBtn = document.getElementById('login-btn');
 
+  if (!email || !pass) return alert('សូមបញ្ចូល Email និង Password');
+
+  // បិទប៊ូតុង និងបង្ហាញ loading
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = '⏳ កំពុងចូល...';
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => {
+      document.getElementById('login-card').style.display = 'none';
+      document.getElementById('form-card').style.display = 'block';
+      document.getElementById('menu-toggle').style.display = 'block';
+
+      const user = auth.currentUser;
+      if (user) {
+        document.getElementById('user-email').textContent = user.email;
+      }
+
+      toggleView('form');
+
+      // ដាក់ប៊ូតុងវិញ
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '🔐 ចូល';
+    })
+    .catch(err => {
+      alert('❌ បញ្ហា: ' + err.message);
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '🔐 ចូល';
+    });
+}
+
+
+
+
+
+
+
+
+  // Register
   function register() {
     const email = document.getElementById('email').value.trim();
     const pass = document.getElementById('password').value.trim();
-    if (!email || !pass) {
-      alert('សូមបញ្ចូល Email និង Password');
-      return;
-    }
+    if (!email || !pass) return alert('សូមបញ្ចូល Email និង Password');
     auth.createUserWithEmailAndPassword(email, pass)
       .then(() => alert('✅ បានបង្កើតគណនី សូមចូលចូល'))
       .catch(err => alert(err.message));
   }
 
+  // Generate Invoice Number
   function generateInvoiceNumber(room, month) {
     const ym = month.replace('-', '');
     const random = Math.floor(Math.random() * 900 + 100);
     return `INV-${ym}-${room}-${random}`;
   }
 
-  async function saveData() {
+  // Validate form inputs
+  function validateForm() {
     const room = document.getElementById('room').value;
     const month = document.getElementById('month').value;
     const name = document.getElementById('customer-name').value.trim();
@@ -277,12 +546,45 @@
     const eOld = +document.getElementById('electric-old').value;
     const eNew = +document.getElementById('electric-new').value;
 
-    if (!room || !month || !name || !phone || isNaN(wOld) || isNaN(wNew) || isNaN(eOld) || isNaN(eNew)) {
-      alert("សូមបំពេញទាំងអស់");
-      return;
-    }
+    if (!room) { alert('សូមជ្រើសបន្ទប់'); return false; }
+    if (!month) { alert('សូមជ្រើសខែ'); return false; }
+    if (!name) { alert('សូមបញ្ចូលឈ្មោះអតិថិជន'); return false; }
+    if (!/^\d{8,9}$/.test(phone)) { alert('លេខទូរស័ព្ទមិនត្រឹមត្រូវ (8 ឬ 9 ខ្ទង់)'); return false; }
+    if (isNaN(wOld) || isNaN(wNew) || isNaN(eOld) || isNaN(eNew)) { alert('សូមបញ្ចូលតម្លៃទឹក និងភ្លើងជាលេខត្រឹមត្រូវ'); return false; }
+    if (wNew < wOld) { alert('ទឹកថ្មីត្រូវតែធំជាង ឬស្មើ ទឹកចាស់'); return false; }
+    if (eNew < eOld) { alert('ភ្លើងថ្មីត្រូវតែធំជាង ឬស្មើ ភ្លើងចាស់'); return false; }
 
-    const invoiceNo = generateInvoiceNumber(room, month);
+    return true;
+  }
+
+  // Clear form fields
+  function clearForm() {
+    ['month', 'room', 'customer-name', 'customer-phone', 'water-old', 'water-new', 'electric-old', 'electric-new'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+
+  // Save new invoice or update existing
+  async function saveData() {
+    if (!validateForm()) return;
+
+    // Check if we are editing (save-btn text changed)
+    const saveBtn = document.getElementById('save-btn');
+    const isEdit = saveBtn.dataset.editing === 'true';
+
+    const room = document.getElementById('room').value;
+    const month = document.getElementById('month').value;
+    const name = document.getElementById('customer-name').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const wOld = +document.getElementById('water-old').value;
+    const wNew = +document.getElementById('water-new').value;
+    const eOld = +document.getElementById('electric-old').value;
+    const eNew = +document.getElementById('electric-new').value;
+
+    let invoiceNo = saveBtn.dataset.invoiceNo;
+    if (!isEdit) {
+      invoiceNo = generateInvoiceNumber(room, month);
+    }
 
     try {
       await db.collection('invoices').doc(invoiceNo).set({
@@ -290,126 +592,398 @@
         waterOld: wOld, waterNew: wNew, electricOld: eOld, electricNew: eNew,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
-      alert("✅ រក្សាទុករួច");
+      alert(isEdit ? "✅ បានកែប្រែវិក្កយបត្រ" : "✅ រក្សាទុករួច");
       clearForm();
+      saveBtn.textContent = "💾 រក្សាទុក";
+      saveBtn.dataset.editing = "false";
+      saveBtn.dataset.invoiceNo = "";
+      loadData();
+      toggleView('form');
     } catch (e) {
       alert("Error: " + e.message);
     }
   }
 
-  function clearForm() {
-    document.getElementById('month').value = '';
-    document.getElementById('room').value = '';
-    document.getElementById('customer-name').value = '';
-    document.getElementById('customer-phone').value = '';
-    document.getElementById('water-old').value = '';
-    document.getElementById('water-new').value = '';
-    document.getElementById('electric-old').value = '';
-    document.getElementById('electric-new').value = '';
-  }
+// Load invoices for history
+async function loadData() {
+  const tbody = document.getElementById('history-tbody');
+  tbody.innerHTML = `<tr><td colspan="6" class="text-center">🔄 កំពុងទាញទិន្នន័យ...</td></tr>`;
 
-  async function loadData() {
-    const tbody = document.getElementById('history-tbody');
-    tbody.innerHTML = '';
+  const filterRoom = document.getElementById('filter-room').value;
+  const filterMonth = document.getElementById('filter-month').value;
 
-    const filterRoom = document.getElementById('filter-room').value;
-    const filterMonth = document.getElementById('filter-month').value;
+  let query = db.collection('invoices');
+  if (filterRoom) query = query.where('room', '==', filterRoom);
+  if (filterMonth) query = query.where('month', '==', filterMonth);
+  query = query.orderBy('timestamp', 'desc');
 
-    let query = db.collection('invoices');
-    if (filterRoom) query = query.where('room', '==', filterRoom);
-    if (filterMonth) query = query.where('month', '==', filterMonth);
-    query = query.orderBy('timestamp', 'desc');
-
-    try {
-      const snap = await query.get();
-      if (snap.empty) {
-        tbody.innerHTML = '<tr><td colspan="6">មិនមានទិន្នន័យ</td></tr>';
-        return;
-      }
-
-      snap.forEach(doc => {
-        const d = doc.data();
-        const dateStr = d.timestamp?.toDate().toLocaleString() || '';
-        const tr = document.createElement('tr');
-
-        tr.innerHTML = `
-          <td>${d.invoiceNo}</td>
-          <td>${d.customerName}</td>
-          <td>${d.room}</td>
-          <td>${d.month}</td>
-          <td>${dateStr}</td>
-          <td><button onclick="printInvoice(event, '${d.invoiceNo}')">🖨️</button></td>
-        `;
-
-        // When click anywhere on row except print button, show modal
-        tr.addEventListener('click', e => {
-          // Prevent triggering modal if clicking print button
-          if (e.target.tagName.toLowerCase() !== 'button') {
-            showModal(d);
-          }
-        });
-
-        tbody.appendChild(tr);
-      });
-    } catch(e) {
-      alert('Error: ' + e.message);
+  try {
+    const snap = await query.get();
+    if (snap.empty) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center">❌ គ្មានទិន្នន័យ</td></tr>`;
+      return;
     }
+
+    tbody.innerHTML = ''; // Clear loading row
+
+    snap.forEach(doc => {
+      const d = doc.data();
+      const dateStr = d.timestamp?.toDate().toLocaleString() || '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${d.invoiceNo}</td>
+        <td>${d.customerName}</td>
+        <td>${d.room}</td>
+        <td>${d.month}</td>
+        <td>${dateStr}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-success me-1" onclick="printInvoice(event, '${d.invoiceNo}')">🖨️</button>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="editInvoice(event, '${d.invoiceNo}')">✏️</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteInvoice(event, '${d.invoiceNo}')">🗑️</button>
+        </td>
+      `;
+      tr.classList.add('pointer');
+      tr.addEventListener('click', e => {
+        if (!['button', 'svg', 'path'].includes(e.target.tagName.toLowerCase())) {
+          showModal(d);
+        }
+      });
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">❌ បញ្ហា៖ ${e.message}</td></tr>`;
   }
+}
 
+
+  // Show invoice details in modal
   function showModal(data) {
-    // Calculate totals
-    const waterUsed = data.waterNew - data.waterOld;
-    const electricUsed = data.electricNew - data.electricOld;
-    const waterPrice = 3000;  
-    const electricPrice = 4000;
-    const totalWater = waterUsed * waterPrice;
-    const totalElectric = electricUsed * electricPrice;
-    const grandTotal = totalWater + totalElectric;
-
-    const dateStr = data.timestamp?.toDate().toLocaleString() || '';
-
-    const text =
-      `វិក្កយបត្រ: ${data.invoiceNo}\n` +
-      `ឈ្មោះអតិថិជន: ${data.customerName}\n` +
-      `បន្ទប់: ${data.room}\n` +
-      `ខែ: ${data.month}\n` +
-      `ថ្ងៃ: ${dateStr}\n\n` +
-      `ទឹកចាស់: ${data.waterOld}\n` +
-      `ទឹកថ្មី: ${data.waterNew}\n` +
-      `ទឹកប្រើ: ${waterUsed} យូនីត\n` +
-      `តម្លៃទឹក (រៀល/យូនីត): ${waterPrice}\n` +
-      `សរុបទឹក: ${totalWater.toLocaleString()} រៀល\n\n` +
-      `ភ្លើងចាស់: ${data.electricOld}\n` +
-      `ភ្លើងថ្មី: ${data.electricNew}\n` +
-      `ភ្លើងប្រើ: ${electricUsed} គីឡូវ៉ាត់\n` +
-      `តម្លៃភ្លើង (រៀល/គីឡូវ៉ាត់): ${electricPrice}\n` +
-      `សរុបភ្លើង: ${totalElectric.toLocaleString()} រៀល\n\n` +
-      `💰 សរុប: ${grandTotal.toLocaleString()} រៀល`;
-
     const modal = document.getElementById('invoice-modal');
     const content = document.getElementById('modal-content');
-    content.textContent = text;
+
+    const invoiceText = `
+វិក្កយបត្រ: ${data.invoiceNo}
+អតិថិជន: ${data.customerName}
+លេខទូរស័ព្ទ: ${data.customerPhone}
+បន្ទប់: បន្ទប់ ${data.room}
+ខែ: ${data.month}
+ទឹកចាស់: ${data.waterOld}
+ទឹកថ្មី: ${data.waterNew}
+ភ្លើងចាស់: ${data.electricOld}
+ភ្លើងថ្មី: ${data.electricNew}
+ថ្ងៃបញ្ចូល: ${data.timestamp?.toDate().toLocaleString() || ''}
+`;
+
+    content.textContent = invoiceText;
     modal.style.display = 'block';
   }
 
+  // Close modal
   function closeModal() {
     document.getElementById('invoice-modal').style.display = 'none';
   }
 
+  // Print modal content
   function printModalContent() {
     const content = document.getElementById('modal-content').textContent;
-    if (!content) {
-      alert('មិនមានខ្លឹមសារ ត្រូវបង្ហាញវិក្កយបត្រមុន');
-      return;
-    }
-    const printWindow = window.open('', '', 'width=600,height=600');
-    printWindow.document.write('<pre style="font-family: KhOS Battambang, Arial; font-size: 16px;">' + content + '</pre>');
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+    const w = window.open('', '', 'width=600,height=600');
+    w.document.write('<pre style="font-family: khmer OS Battambang, Arial; font-size: 16px;">' + content + '</pre>');
+    w.document.close();
+    w.focus();
+    w.print();
+    w.close();
   }
+
+  // Print invoice by invoiceNo
+  async function printInvoice(event, invoiceNo) {
+    event.stopPropagation();
+    try {
+      const doc = await db.collection('invoices').doc(invoiceNo).get();
+      if (!doc.exists) return alert("Invoice មិនមាន");
+      showModal(doc.data());
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  // Edit invoice by invoiceNo
+  async function editInvoice(event, invoiceNo) {
+    event.stopPropagation();
+    try {
+      const doc = await db.collection('invoices').doc(invoiceNo).get();
+      if (!doc.exists) return alert("Invoice មិនមាន");
+
+      const d = doc.data();
+
+      toggleView('form');
+      document.getElementById('month').value = d.month;
+      document.getElementById('room').value = d.room;
+      document.getElementById('customer-name').value = d.customerName;
+      document.getElementById('customer-phone').value = d.customerPhone;
+      document.getElementById('water-old').value = d.waterOld;
+      document.getElementById('water-new').value = d.waterNew;
+      document.getElementById('electric-old').value = d.electricOld;
+      document.getElementById('electric-new').value = d.electricNew;
+
+      const saveBtn = document.getElementById('save-btn');
+      saveBtn.textContent = "💾 កែប្រែ";
+      saveBtn.dataset.editing = "true";
+      saveBtn.dataset.invoiceNo = invoiceNo;
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  // Delete invoice by invoiceNo
+  async function deleteInvoice(event, invoiceNo) {
+    event.stopPropagation();
+    if (!confirm("តើអ្នកប្រាកដជាលុបវិក្កយបត្រនេះ?")) return;
+    try {
+      await db.collection('invoices').doc(invoiceNo).delete();
+      alert("✅ បានលុបវិក្កយបត្រ");
+      loadData();
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  // On auth state changed
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('login-card').style.display = 'none';
+      document.getElementById('form-card').style.display = 'block';
+      document.getElementById('menu-toggle').style.display = 'block';
+      document.getElementById('user-email').textContent = user.email;
+      const view = localStorage.getItem('currentView') || 'form';
+      toggleView(view);
+    } else {
+      document.getElementById('login-card').style.display = 'block';
+      document.getElementById('form-card').style.display = 'none';
+      document.getElementById('menu-toggle').style.display = 'none';
+    }
+  });
+
+  // On page load
+  window.onload = () => {
+    // Hide menu on small screen init
+    document.getElementById('side-menu').style.width = '0';
+  };
+
+
+
+
+
+
+
+
+function resetForm() {
+  clearForm();
+  const saveBtn = document.getElementById('save-btn');
+  saveBtn.textContent = "💾 រក្សាទុក";
+  saveBtn.dataset.editing = "false";
+  saveBtn.dataset.invoiceNo = "";
+}
+function clearForm() {
+  ['month', 'room', 'customer-name', 'customer-phone', 'water-old', 'water-new', 'electric-old', 'electric-new'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Load customer for selected room
+function loadCustomerInfo() {
+  const room = document.getElementById('edit-room').value;
+  if (!room) return;
+
+  db.collection("customers").doc(room).get().then(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      document.getElementById('edit-customer-name').value = data.name || '';
+      document.getElementById('edit-customer-phone').value = data.phone || '';
+    } else {
+      document.getElementById('edit-customer-name').value = '';
+      document.getElementById('edit-customer-phone').value = '';
+    }
+  }).catch(err => {
+    alert("Error loading customer: " + err.message);
+  });
+}
+
+function loadAllCustomers() {
+  const tbody = document.getElementById("customer-table-body");
+  
+  // បង្ហាញសារកំពុងដំណើរការ
+  tbody.innerHTML = '<tr><td colspan="3" class="text-center">កំពុងដំណើរការ...</td></tr>';
+  
+  db.collection("customers").orderBy("name").get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center">គ្មានទិន្នន័យ</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = ''; // លុបសារកំពុងដំណើរការ
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>បន្ទប់ ${doc.id}</td>
+          <td>${d.name}</td>
+          <td>${d.phone}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+    });
+}
+
+
+// Call list when entering view
+function toggleView(view) {
+  document.getElementById('form-card').style.display = (view === 'form' || view === 'history') ? 'block' : 'none';
+  document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
+  document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
+  document.getElementById('edit-customer-card').style.display = (view === 'edit-customer') ? 'block' : 'none';
+
+  if (view === 'history') loadData();
+  if (view === 'edit-customer') {
+    loadCustomerInfo();
+    loadAllCustomers(); // ← this line added
+  }
+
+  localStorage.setItem('currentView', view);
+}
+
+
+
+
+
+function resetForm() {
+  document.getElementById("edit-room").value = "";
+  document.getElementById("edit-customer-name").value = "";
+  document.getElementById("edit-customer-phone").value = "";
+}
+
+function updateCustomer() {
+  const room = document.getElementById("edit-room").value;
+  const name = document.getElementById("edit-customer-name").value.trim();
+  const phone = document.getElementById("edit-customer-phone").value.trim();
+
+  if (!room) return alert("សូមជ្រើសបន្ទប់");
+  if (!name) return alert("សូមបញ្ចូលឈ្មោះអតិថិជន");
+  if (!/^\d{8,9}$/.test(phone)) return alert("លេខទូរស័ព្ទមិនត្រឹមត្រូវ (8 ឬ 9 ខ្ទង់)");
+
+  db.collection("customers").doc(room).set({
+    name: name,
+    phone: phone
+  }).then(() => {
+    alert("✅ បានរក្សាទុកឬកែប្រែអតិថិជន");
+    loadAllCustomers();
+    resetForm();  // <-- reset input fields here
+  }).catch(err => {
+    alert("បញ្ហាក្នុងការរក្សាទុក: " + err.message);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function autoFillCustomerInfo() {
+  const room = document.getElementById("room").value;
+  if (!room) {
+    document.getElementById("customer-name").value = "";
+    document.getElementById("customer-phone").value = "";
+    return;
+  }
+
+  db.collection("customers").doc(room).get().then(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      document.getElementById("customer-name").value = data.name || "";
+      document.getElementById("customer-phone").value = data.phone || "";
+    } else {
+      document.getElementById("customer-name").value = "";
+      document.getElementById("customer-phone").value = "";
+    }
+  }).catch(err => {
+    alert("បញ្ហា៖ " + err.message);
+  });
+}
+
+
+
+
+
+
+
+
+
 </script>
+
+
+
+
+
+
+
+
+
+
 
 </body>
 </html>
