@@ -30,13 +30,13 @@
     /* Side menu styles */
     #menu-toggle {
       position: fixed;
-      top: 15px;
+      top: 5px;
       left: 15px;
       background: #0d6efd;
       color: white;
       border: none;
       font-size: 24px;
-      padding: 10px 15px;
+      padding: 1px 15px;
       border-radius: 6px;
       z-index: 1050;
       display: none;
@@ -46,12 +46,12 @@
       width: 0;
       position: fixed;
       z-index: 1040;
-      top: 0;
-      left: 0;
+      top: 10px;
+      left: 5px;
       background-color: white;
       overflow-x: hidden;
       transition: 0.3s;
-      padding-top: 60px;
+      padding-top: 20px;
       box-shadow: 2px 0 6px rgba(0,0,0,0.2);
     }
     .side-menu a {
@@ -66,7 +66,7 @@
     }
     .menu-header {
       text-align: center;
-      padding: 20px 10px 10px;
+      padding: 2px 10px 10px;
       background-color: #0d6efd;
       color: white;
       font-weight: bold;
@@ -122,6 +122,60 @@
 
 
   </style>
+
+
+
+
+
+
+<style>
+  #loading-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9999;
+  }
+
+  .overlay-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .overlay-content {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
 </head>
 <body>
 
@@ -131,8 +185,8 @@
 <!-- Side Drawer Menu -->
 <div id="side-menu" class="side-menu">
   <div class="menu-header">
-    🧑‍💼
-    <div id="user-email" style="margin-top: 5px; font-size: 15px;"></div>
+ 
+    <div id="user-email" style="margin-top: 5px; font-size: 12px;"></div>
   </div>
   <hr />
   <a href="#" onclick="toggleView('form'); toggleMenu()">➕ បញ្ចូលវិក្កយបត្រ</a>
@@ -155,8 +209,8 @@
 
 
 <!-- Login Card -->
-<div class="card p-4" id="login-card" style="font-family: 'Khmer OS Battambang', sans-serif;">
-  <h2 class="text-center mb-3">📥 ចូលប្រើប្រព័ន្ធ</h2>
+<div class="card p-4" id="login-card" style="font-family: 'Khmer OS Battambang', sans-serif; max-width: 400px; margin: auto;">
+  <h2 class="text-center mb-3">📥 វិកាយប័ត្រ-ទឹក ភ្លើង</h2>
 
   <!-- Email -->
   <input type="email" id="email" class="form-control mb-2" placeholder="អ៊ីម៉ែល" />
@@ -164,7 +218,7 @@
   <!-- Password + Eye -->
   <div class="mb-3 position-relative">
     <input type="password" id="password" class="form-control pe-5" placeholder="ពាក្យសម្ងាត់" />
-    <span onclick="togglePassword()" class="position-absolute end-0 top-50 translate-middle-y me-3" style="cursor: pointer;">
+    <span id="toggle-eye" onclick="togglePassword()" class="position-absolute end-0 top-50 translate-middle-y me-3" style="cursor: pointer;">
       👁️
     </span>
   </div>
@@ -174,7 +228,13 @@
 
   <!-- Register Button -->
   <button class="btn btn-outline-secondary w-100" onclick="register()">📋 បង្កើតគណនី</button>
+
+  <!-- Error + Timer -->
+  <p id="login-error" style="color:red; min-height:1.5em; margin-top: 0.5em;"></p>
+  <p id="lock-timer" style="color:orange; font-weight: bold; min-height:1.5em;"></p>
 </div>
+
+
 
 
 
@@ -188,10 +248,10 @@
     <label for="edit-room" class="form-label">ជ្រើសបន្ទប់</label>
     <select id="edit-room" class="form-select" onchange="loadCustomerInfo()">
       <option value="">-- ជ្រើសបន្ទប់ --</option>
-      <option value="1">បន្ទប់ ១</option>
-      <option value="2">បន្ទប់ ២</option>
-      <option value="3">បន្ទប់ ៣</option>
-      <option value="4">បន្ទប់ ៤</option>
+      <option value="1">បន្ទប់ 1</option>
+      <option value="2">បន្ទប់ 2</option>
+      <option value="3">បន្ទប់ 3</option>
+      <option value="4">បន្ទប់ 4</option>
     </select>
   </div>
 
@@ -211,8 +271,8 @@
   </div>
 
   <!-- Customer Table -->
-  <div class="card p-4 mt-4" id="customer-list-card">
-    <h4 class="mb-3 text-center">📒 បញ្ជីអតិថិជន</h4>
+  <div class="card p-1 mt-4" id="customer-list-card">
+    <h4 class="mb-2 text-center">បញ្ជីអតិថិជន</h4>
     <div class="table-responsive">
       <table class="table table-bordered text-center">
         <thead class="table-light">
@@ -265,10 +325,10 @@
   <label for="room" class="form-label">បន្ទប់</label>
   <select id="room" class="form-select" onchange="autoFillCustomerInfo()">
     <option value="">-- ជ្រើសបន្ទប់ --</option>
-    <option value="1">បន្ទប់ ១</option>
-    <option value="2">បន្ទប់ ២</option>
-    <option value="3">បន្ទប់ ៣</option>
-    <option value="4">បន្ទប់ ៤</option>
+    <option value="1">បន្ទប់ 1</option>
+    <option value="2">បន្ទប់ 2</option>
+    <option value="3">បន្ទប់ 3</option>
+    <option value="4">បន្ទប់ 4</option>
   </select>
 </div>
 
@@ -331,9 +391,9 @@
 
 
 
-      <div class="d-grid gap-2">
-         <button id="save-btn" onclick="saveData()" style="width:100%; padding:10px; font-size:12px; border:none; border-radius:6px; background:#1e88e5; color:white;">💾 រក្សាទុក</button>
-         <button  type="button" class="btn btn-outline-danger" onclick="resetForm()" style="width:30%; padding:10px; font-size:10px; border:none; border-radius:6px;">♻️ កំណត់ឡើងវិញ</button>
+<div class="d-grid gap-2 ">
+         <button id="save-btn" onclick="saveData()" style="width:100%; padding:10px; font-size:12px; border:none; border-radius:12px; background:#1e88e5; color:white;">💾 រក្សាទុក</button>
+         <button  type="button" class="btn btn-outline-danger btn-justify-content-center" onclick="resetForm()" style="width:100%; padding:12px; font-size:12px; border:none; border-radius:6px; ">♻️ កំណត់ឡើងវិញ</button>
 
       </div>
 
@@ -393,6 +453,33 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" style="display: none;">
+  <div class="overlay-bg"></div>
+  <div class="overlay-content">
+    <div class="spinner"></div>
+    <div class="mt-3 text-white fs-5">⏳ កំពុងដំណើរការ....</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script>
   // Firebase config + init
@@ -462,33 +549,62 @@
 
 
 
-function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const eyeIcon = passwordInput.nextElementSibling;
 
-    if (passwordInput.type === 'password') {
-      passwordInput.type = 'text';
-      eyeIcon.textContent = '🙈'; // បើក
-    } else {
-      passwordInput.type = 'password';
-      eyeIcon.textContent = '👁️'; // បិទ
-    }
+
+
+
+
+
+
+
+
+
+let loginAttempts = 0;
+const maxAttempts = 5;
+const lockDuration = 60; // វិនាទី
+let countdownInterval = null;
+
+function togglePassword() {
+  const passwordInput = document.getElementById('password');
+  const eyeIcon = document.getElementById('toggle-eye');
+
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    eyeIcon.textContent = '🙈';
+  } else {
+    passwordInput.type = 'password';
+    eyeIcon.textContent = '👁️';
+  }
+}
+
+function login() {
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const loginBtn = document.getElementById('login-btn');
+  const errorText = document.getElementById('login-error');
+  const timerText = document.getElementById('lock-timer');
+
+  if (loginBtn.disabled) return;
+
+  const email = emailInput.value.trim();
+  const pass = passwordInput.value.trim();
+
+  if (!email || !pass) {
+    errorText.textContent = 'សូមបញ្ចូល Email និង Password';
+    return;
   }
 
-// Login
- function login() {
-  const email = document.getElementById('email').value.trim();
-  const pass = document.getElementById('password').value.trim();
-  const loginBtn = document.getElementById('login-btn');
-
-  if (!email || !pass) return alert('សូមបញ្ចូល Email និង Password');
-
-  // បិទប៊ូតុង និងបង្ហាញ loading
   loginBtn.disabled = true;
-  loginBtn.innerHTML = '⏳ កំពុងចូល...';
+  loginBtn.textContent = '⏳ កំពុងចូល...';
+  errorText.textContent = '';
+  timerText.textContent = '';
 
   auth.signInWithEmailAndPassword(email, pass)
     .then(() => {
+      loginAttempts = 0;
+      errorText.textContent = '';
+      timerText.textContent = '';
+
       document.getElementById('login-card').style.display = 'none';
       document.getElementById('form-card').style.display = 'block';
       document.getElementById('menu-toggle').style.display = 'block';
@@ -497,19 +613,100 @@ function togglePassword() {
       if (user) {
         document.getElementById('user-email').textContent = user.email;
       }
-
       toggleView('form');
-
-      // ដាក់ប៊ូតុងវិញ
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = '🔐 ចូល';
     })
     .catch(err => {
-      alert('❌ បញ្ហា: ' + err.message);
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = '🔐 ចូល';
+      loginAttempts++;
+      let message = "❌ បញ្ហាដែលមិនស្គាល់";
+
+      if (loginAttempts >= maxAttempts) {
+        message = "🚫 អ្នកបានចូលខុស ៥ ដង។ សូមរង់ចាំ ១ នាទី មុនព្យាយាមម្ដងទៀត។";
+        lockInputs();
+      } else {
+        switch (err.code) {
+          case 'auth/invalid-email':
+            message = "❌ អ៊ីម៉ែលមិនត្រឹមត្រូវ";
+            break;
+          case 'auth/wrong-password':
+          case 'auth/user-not-found':
+          case 'auth/invalid-login-credentials':
+            message = "❌ អ៊ីមែល ឬ ពាក្យសម្ងាត់មិនត្រឹមត្រូវ";
+            break;
+          case 'auth/too-many-requests':
+            message = "🚫 ចូលច្រើនពេក សូមរង់ចាំមុន!";
+            break;
+          default:
+            message = "❌ " + err.message;
+        }
+      }
+
+      errorText.textContent = message;
+    })
+    .finally(() => {
+      if (loginAttempts < maxAttempts) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = '🔐 ចូល';
+      }
     });
 }
+
+function lockInputs() {
+  const loginBtn = document.getElementById('login-btn');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const timerText = document.getElementById('lock-timer');
+  const errorText = document.getElementById('login-error');
+
+  loginBtn.disabled = true;
+  emailInput.disabled = true;
+  passwordInput.disabled = true;
+
+  let timeLeft = lockDuration;
+  timerText.textContent = `🚫 សូមរង់ចាំ ${timeLeft} វិនាទី មុនព្យាយាមចូលម្តងទៀត។`;
+
+  countdownInterval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      unlockInputs();
+      timerText.textContent = '✅ អ្នកអាចចូលបានម្តងទៀត';
+      setTimeout(() => { timerText.textContent = ''; }, 3000);
+    } else {
+      timerText.textContent = `🚫 សូមរង់ចាំ ${timeLeft} វិនាទី មុនចូលម្តងទៀត។`;
+    }
+  }, 1000);
+}
+
+function unlockInputs() {
+  loginAttempts = 0;
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = '🔐 ចូល';
+  document.getElementById('email').disabled = false;
+  document.getElementById('password').disabled = false;
+}
+
+function register() {
+  alert("📋 សូមបង្កើតគណនីថ្មី");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -564,45 +761,51 @@ function togglePassword() {
     });
   }
 
-  // Save new invoice or update existing
-  async function saveData() {
-    if (!validateForm()) return;
+ async function saveData() {
+  if (!validateForm()) return;
 
-    // Check if we are editing (save-btn text changed)
-    const saveBtn = document.getElementById('save-btn');
-    const isEdit = saveBtn.dataset.editing === 'true';
+  const saveBtn = document.getElementById('save-btn');
+  const isEdit = saveBtn.dataset.editing === 'true';
 
-    const room = document.getElementById('room').value;
-    const month = document.getElementById('month').value;
-    const name = document.getElementById('customer-name').value.trim();
-    const phone = document.getElementById('customer-phone').value.trim();
-    const wOld = +document.getElementById('water-old').value;
-    const wNew = +document.getElementById('water-new').value;
-    const eOld = +document.getElementById('electric-old').value;
-    const eNew = +document.getElementById('electric-new').value;
+  const room = document.getElementById('room').value;
+  const month = document.getElementById('month').value;
+  const name = document.getElementById('customer-name').value.trim();
+  const phone = document.getElementById('customer-phone').value.trim();
+  const wOld = +document.getElementById('water-old').value;
+  const wNew = +document.getElementById('water-new').value;
+  const eOld = +document.getElementById('electric-old').value;
+  const eNew = +document.getElementById('electric-new').value;
 
-    let invoiceNo = saveBtn.dataset.invoiceNo;
-    if (!isEdit) {
-      invoiceNo = generateInvoiceNumber(room, month);
-    }
-
-    try {
-      await db.collection('invoices').doc(invoiceNo).set({
-        invoiceNo, room, month, customerName: name, customerPhone: phone,
-        waterOld: wOld, waterNew: wNew, electricOld: eOld, electricNew: eNew,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      alert(isEdit ? "✅ បានកែប្រែវិក្កយបត្រ" : "✅ រក្សាទុករួច");
-      clearForm();
-      saveBtn.textContent = "💾 រក្សាទុក";
-      saveBtn.dataset.editing = "false";
-      saveBtn.dataset.invoiceNo = "";
-      loadData();
-      toggleView('form');
-    } catch (e) {
-      alert("Error: " + e.message);
-    }
+  let invoiceNo = saveBtn.dataset.invoiceNo;
+  if (!isEdit) {
+    invoiceNo = generateInvoiceNumber(room, month);
   }
+
+  // ⏳ បង្ហាញ Overlay Spinner
+  showLoading();
+
+  try {
+    await db.collection('invoices').doc(invoiceNo).set({
+      invoiceNo, room, month, customerName: name, customerPhone: phone,
+      waterOld: wOld, waterNew: wNew, electricOld: eOld, electricNew: eNew,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  
+    clearForm();
+    saveBtn.textContent = "💾 រក្សាទុក";
+    saveBtn.dataset.editing = "false";
+    saveBtn.dataset.invoiceNo = "";
+    loadData();
+    toggleView('form');
+  } catch (e) {
+    alert("មានបញ្ហាក្នុងការរក្សាទុក: " + e.message);
+  } finally {
+    // ✅ បិទ Overlay Spinner
+    hideLoading();
+  }
+}
+
 
 // Load invoices for history
 async function loadData() {
@@ -899,17 +1102,30 @@ function updateCustomer() {
   if (!name) return alert("សូមបញ្ចូលឈ្មោះអតិថិជន");
   if (!/^\d{8,9}$/.test(phone)) return alert("លេខទូរស័ព្ទមិនត្រឹមត្រូវ (8 ឬ 9 ខ្ទង់)");
 
+  showLoading(); // ⏳ Show spinner
+
   db.collection("customers").doc(room).set({
     name: name,
     phone: phone
   }).then(() => {
     alert("✅ បានរក្សាទុកឬកែប្រែអតិថិជន");
     loadAllCustomers();
-    resetForm();  // <-- reset input fields here
+    resetForm();
   }).catch(err => {
     alert("បញ្ហាក្នុងការរក្សាទុក: " + err.message);
+  }).finally(() => {
+    hideLoading(); // ✅ Hide spinner
   });
 }
+function showLoading() {
+  document.getElementById("loading-overlay").style.display = "block";
+}
+
+function hideLoading() {
+  document.getElementById("loading-overlay").style.display = "none";
+}
+
+
 
 
 
