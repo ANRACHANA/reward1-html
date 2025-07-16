@@ -164,6 +164,32 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+
+
+
+
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* ស្រអាប់ */
+  z-index: 998; /* ខាងក្រោម menu */
+  display: none; /* លាក់ */
+}
+
+
+
+
+
+
+
+
+
+
 </style>
 
 
@@ -197,6 +223,7 @@
 
   <a href="#" onclick="logout()">🚪 ចេញ</a>
 </div>
+<div id="overlay"></div>
 
 
 
@@ -240,53 +267,6 @@
 
 
 
-<!-- Edit Customer Section -->
-<div class="card p-4" id="edit-customer-card" style="display: none;">
-  <h3 class="mb-4 text-center">👤 កែប្រែឈ្មោះអតិថិជនតាមបន្ទប់</h3>
-
-  <div class="mb-3">
-    <label for="edit-room" class="form-label">ជ្រើសបន្ទប់</label>
-    <select id="edit-room" class="form-select" onchange="loadCustomerInfo()">
-      <option value="">-- ជ្រើសបន្ទប់ --</option>
-      <option value="1">បន្ទប់ 1</option>
-      <option value="2">បន្ទប់ 2</option>
-      <option value="3">បន្ទប់ 3</option>
-      <option value="4">បន្ទប់ 4</option>
-    </select>
-  </div>
-
-  <div class="mb-3">
-    <label for="edit-customer-name" class="form-label">ឈ្មោះអតិថិជន</label>
-    <input type="text" id="edit-customer-name" class="form-control" />
-  </div>
-
-  <div class="mb-3">
-    <label for="edit-customer-phone" class="form-label">លេខទូរស័ព្ទ</label>
-    <input type="text" id="edit-customer-phone" class="form-control" />
-  </div>
-
-  <div class="d-grid">
-    <button class="btn btn-success" onclick="updateCustomer()">💾 បញ្ចូល / កែប្រែ</button>
-
-  </div>
-
-  <!-- Customer Table -->
-  <div class="card p-1 mt-4" id="customer-list-card">
-    <h4 class="mb-2 text-center">បញ្ជីអតិថិជន</h4>
-    <div class="table-responsive">
-      <table class="table table-bordered text-center">
-        <thead class="table-light">
-          <tr>
-            <th>បន្ទប់</th>
-            <th>ឈ្មោះអតិថិជន</th>
-            <th>លេខទូរស័ព្ទ</th>
-          </tr>
-        </thead>
-        <tbody id="customer-table-body"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
 
 
 
@@ -306,7 +286,7 @@
     <button type="button" class="btn btn-primary my-3" onclick="toggleView('form')">➕ បញ្ចូលវិក្កយបត្រ</button>
     <button type="button" class="btn btn-success my-3" onclick="toggleView('history')">📋 ប្រវត្តិ</button>
 
-<button class="btn btn-primary my-3" onclick="loadCustomerList()">បង្ហាញអតិថិជន</button>
+   <button class="btn btn-primary my-3" onclick="loadCustomerList('edit-customer')">បង្ហាញអតិថិជន</button>
 
   <button type="button" class="btn btn-outline-danger my-3"onclick="logout()">ចាក់ចេញ</button>
   </div>
@@ -400,6 +380,18 @@
     </form>
   </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
   <!-- History View -->
   <div id="history-view" style="display: none;">
     <h3 class="mb-4 text-center">📋 ប្រវត្តិវិក្កយបត្រ</h3>
@@ -456,6 +448,58 @@
 
 
 
+<!-- Edit Customer Section -->
+<div class="card p-4" id="edit-customer-card" style="display: none;">
+  <h3 class="mb-4 text-center">👤 កែប្រែឈ្មោះអតិថិជនតាមបន្ទប់</h3>
+
+  <div class="mb-3">
+    <label for="edit-room" class="form-label">ជ្រើសបន្ទប់</label>
+    <select id="edit-room" class="form-select" onchange="loadCustomerInfo()">
+      <option value="">-- ជ្រើសបន្ទប់ --</option>
+      <option value="1">បន្ទប់ 1</option>
+      <option value="2">បន្ទប់ 2</option>
+      <option value="3">បន្ទប់ 3</option>
+      <option value="4">បន្ទប់ 4</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="edit-customer-name" class="form-label">ឈ្មោះអតិថិជន</label>
+    <input type="text" id="edit-customer-name" class="form-control" />
+  </div>
+
+  <div class="mb-3">
+    <label for="edit-customer-phone" class="form-label">លេខទូរស័ព្ទ</label>
+    <input type="text" id="edit-customer-phone" class="form-control" />
+  </div>
+
+ <button class="btn btn-success d-flex align-items-center justify-content-center gap-2" id="save-customer-btn" onclick="updateCustomer()">
+  <span class="spinner-border spinner-border-sm d-none" id="save-spinner" role="status" aria-hidden="true"></span>
+  <span id="save-btn-text">💾 បញ្ចូល / កែប្រែ</span>
+</button>
+
+  <!-- Customer Table -->
+  <div class="card p-1 mt-4" id="customer-list-card">
+    <h4 class="mb-2 text-center">បញ្ជីអតិថិជន</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>បន្ទប់</th>
+            <th>ឈ្មោះអតិថិជន</th>
+            <th>លេខទូរស័ព្ទ</th>
+            <th>សកម្មភាព</th> <!-- For delete/edit -->
+          </tr>
+        </thead>
+        <tbody id="customer-table-body">
+          <!-- Rows will be populated dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
 
 
 
@@ -480,337 +524,195 @@
 
 
 
-
 <script>
-  // Firebase config + init
-  const firebaseConfig = {
-    apiKey: "AIzaSyBt_ScEi_StJ0wQDP-gZwMWmy5A7HqEcXE",
-    authDomain: "invoice-77616.firebaseapp.com",
-    projectId: "invoice-77616",
-    storageBucket: "invoice-77616.appspot.com",
-    messagingSenderId: "91579214593",
-    appId: "1:91579214593:web:eca7aad598915de58ec900"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const auth = firebase.auth();
+// ==== Firebase Config & Init ====
+const firebaseConfig = {
+  apiKey: "AIzaSyBt_ScEi_StJ0wQDP-gZwMWmy5A7HqEcXE",
+  authDomain: "invoice-77616.firebaseapp.com",
+  projectId: "invoice-77616",
+  storageBucket: "invoice-77616.appspot.com",
+  messagingSenderId: "91579214593",
+  appId: "1:91579214593:web:eca7aad598915de58ec900"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-  // Toggle side menu
-  function toggleMenu() {
-    const menu = document.getElementById("side-menu");
-    menu.style.width = (menu.style.width === "250px") ? "0" : "250px";
-  }
+// ==== Global Variables ====
+let loginAttempts = 0;
+const maxLoginAttempts = 5;
+const lockSeconds = 60;
 
-  // Logout
-  function logout() {
-    auth.signOut().then(() => {
-      alert("បានចេញពីប្រព័ន្ធ");
-      location.reload();
-    });
-  }
-
-
-
-
-
-
-
-
-
-
-  // Toggle between form and history views
-  function toggleView(view) {
-  document.getElementById('form-card').style.display = (view === 'form' || view === 'history') ? 'block' : 'none';
+// ==== UI Utilities ====
+function toggleView(view) {
   document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
   document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
   document.getElementById('edit-customer-card').style.display = (view === 'edit-customer') ? 'block' : 'none';
-
-  if (view === 'history') loadData();
-  if (view === 'edit-customer') loadCustomerInfo();
-
-  // រក្សាទុក state ចុងក្រោយ
-  localStorage.setItem('currentView', view);
 }
 
+function showLoading(show) {
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) overlay.style.display = show ? 'block' : 'none';
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-let loginAttempts = 0;
-const maxAttempts = 5;
-const lockDuration = 60; // វិនាទី
-let countdownInterval = null;
-
+// ==== Login System ====
 function togglePassword() {
-  const passwordInput = document.getElementById('password');
-  const eyeIcon = document.getElementById('toggle-eye');
-
-  if (passwordInput.type === 'password') {
-    passwordInput.type = 'text';
-    eyeIcon.textContent = '🙈';
+  const input = document.getElementById('password');
+  const eye = document.getElementById('toggle-eye');
+  if (input.type === 'password') {
+    input.type = 'text';
+    eye.textContent = '🙈';
   } else {
-    passwordInput.type = 'password';
-    eyeIcon.textContent = '👁️';
+    input.type = 'password';
+    eye.textContent = '👁️';
   }
 }
 
-function login() {
+function lockLogin() {
+  const btn = document.getElementById('login-btn');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
-  const loginBtn = document.getElementById('login-btn');
-  const errorText = document.getElementById('login-error');
-  const timerText = document.getElementById('lock-timer');
+  const timer = document.getElementById('lock-timer');
+  const error = document.getElementById('login-error');
+  let timeLeft = lockSeconds;
 
-  if (loginBtn.disabled) return;
-
-  const email = emailInput.value.trim();
-  const pass = passwordInput.value.trim();
-
-  if (!email || !pass) {
-    errorText.textContent = 'សូមបញ្ចូល Email និង Password';
-    return;
-  }
-
-  loginBtn.disabled = true;
-  loginBtn.textContent = '⏳ កំពុងចូល...';
-  errorText.textContent = '';
-  timerText.textContent = '';
-
-  auth.signInWithEmailAndPassword(email, pass)
-    .then(() => {
-      loginAttempts = 0;
-      errorText.textContent = '';
-      timerText.textContent = '';
-
-      document.getElementById('login-card').style.display = 'none';
-      document.getElementById('form-card').style.display = 'block';
-      document.getElementById('menu-toggle').style.display = 'block';
-
-      const user = auth.currentUser;
-      if (user) {
-        document.getElementById('user-email').textContent = user.email;
-      }
-      toggleView('form');
-    })
-    .catch(err => {
-      loginAttempts++;
-      let message = "❌ បញ្ហាដែលមិនស្គាល់";
-
-      if (loginAttempts >= maxAttempts) {
-        message = "🚫 អ្នកបានចូលខុស ៥ ដង។ សូមរង់ចាំ ១ នាទី មុនព្យាយាមម្ដងទៀត។";
-        lockInputs();
-      } else {
-        switch (err.code) {
-          case 'auth/invalid-email':
-            message = "❌ អ៊ីម៉ែលមិនត្រឹមត្រូវ";
-            break;
-          case 'auth/wrong-password':
-          case 'auth/user-not-found':
-          case 'auth/invalid-login-credentials':
-            message = "❌ អ៊ីមែល ឬ ពាក្យសម្ងាត់មិនត្រឹមត្រូវ";
-            break;
-          case 'auth/too-many-requests':
-            message = "🚫 ចូលច្រើនពេក សូមរង់ចាំមុន!";
-            break;
-          default:
-            message = "❌ " + err.message;
-        }
-      }
-
-      errorText.textContent = message;
-    })
-    .finally(() => {
-      if (loginAttempts < maxAttempts) {
-        loginBtn.disabled = false;
-        loginBtn.textContent = '🔐 ចូល';
-      }
-    });
-}
-
-function lockInputs() {
-  const loginBtn = document.getElementById('login-btn');
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const timerText = document.getElementById('lock-timer');
-  const errorText = document.getElementById('login-error');
-
-  loginBtn.disabled = true;
+  btn.disabled = true;
   emailInput.disabled = true;
   passwordInput.disabled = true;
 
-  let timeLeft = lockDuration;
-  timerText.textContent = `🚫 សូមរង់ចាំ ${timeLeft} វិនាទី មុនព្យាយាមចូលម្តងទៀត។`;
+  timer.textContent = `🚫 សូមរង់ចាំ ${timeLeft} វិនាទី មុនចូលម្ដងទៀត។`;
+  error.textContent = '';
 
-  countdownInterval = setInterval(() => {
+  const lockInterval = setInterval(() => {
     timeLeft--;
     if (timeLeft <= 0) {
-      clearInterval(countdownInterval);
-      unlockInputs();
-      timerText.textContent = '✅ អ្នកអាចចូលបានម្តងទៀត';
-      setTimeout(() => { timerText.textContent = ''; }, 3000);
+      clearInterval(lockInterval);
+      btn.disabled = false;
+      emailInput.disabled = false;
+      passwordInput.disabled = false;
+      timer.textContent = '';
+      loginAttempts = 0;
     } else {
-      timerText.textContent = `🚫 សូមរង់ចាំ ${timeLeft} វិនាទី មុនចូលម្តងទៀត។`;
+      timer.textContent = `🚫 សូមរង់ចាំ ${timeLeft} វិនាទី មុនចូលម្ដងទៀត។`;
     }
   }, 1000);
 }
 
-function unlockInputs() {
-  loginAttempts = 0;
-  document.getElementById('login-btn').disabled = false;
-  document.getElementById('login-btn').textContent = '🔐 ចូល';
-  document.getElementById('email').disabled = false;
-  document.getElementById('password').disabled = false;
-}
+async function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const error = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
 
-function register() {
-  alert("📋 សូមបង្កើតគណនីថ្មី");
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Register
-  function register() {
-    const email = document.getElementById('email').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    if (!email || !pass) return alert('សូមបញ្ចូល Email និង Password');
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => alert('✅ បានបង្កើតគណនី សូមចូលចូល'))
-      .catch(err => alert(err.message));
+  if (!email || !password) {
+    error.textContent = 'សូមបញ្ចូលអ៊ីម៉ែល និងពាក្យសម្ងាត់';
+    return;
   }
 
-  // Generate Invoice Number
-  function generateInvoiceNumber(room, month) {
-    const ym = month.replace('-', '');
-    const random = Math.floor(Math.random() * 900 + 100);
-    return `INV-${ym}-${room}-${random}`;
-  }
-
-  // Validate form inputs
-  function validateForm() {
-    const room = document.getElementById('room').value;
-    const month = document.getElementById('month').value;
-    const name = document.getElementById('customer-name').value.trim();
-    const phone = document.getElementById('customer-phone').value.trim();
-    const wOld = +document.getElementById('water-old').value;
-    const wNew = +document.getElementById('water-new').value;
-    const eOld = +document.getElementById('electric-old').value;
-    const eNew = +document.getElementById('electric-new').value;
-
-    if (!room) { alert('សូមជ្រើសបន្ទប់'); return false; }
-    if (!month) { alert('សូមជ្រើសខែ'); return false; }
-    if (!name) { alert('សូមបញ្ចូលឈ្មោះអតិថិជន'); return false; }
-    if (!/^\d{8,9}$/.test(phone)) { alert('លេខទូរស័ព្ទមិនត្រឹមត្រូវ (8 ឬ 9 ខ្ទង់)'); return false; }
-    if (isNaN(wOld) || isNaN(wNew) || isNaN(eOld) || isNaN(eNew)) { alert('សូមបញ្ចូលតម្លៃទឹក និងភ្លើងជាលេខត្រឹមត្រូវ'); return false; }
-    if (wNew < wOld) { alert('ទឹកថ្មីត្រូវតែធំជាង ឬស្មើ ទឹកចាស់'); return false; }
-    if (eNew < eOld) { alert('ភ្លើងថ្មីត្រូវតែធំជាង ឬស្មើ ភ្លើងចាស់'); return false; }
-
-    return true;
-  }
-
-  // Clear form fields
-  function clearForm() {
-    ['month', 'room', 'customer-name', 'customer-phone', 'water-old', 'water-new', 'electric-old', 'electric-new'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-  }
-
- async function saveData() {
-  if (!validateForm()) return;
-
-  const saveBtn = document.getElementById('save-btn');
-  const isEdit = saveBtn.dataset.editing === 'true';
-
-  const room = document.getElementById('room').value;
-  const month = document.getElementById('month').value;
-  const name = document.getElementById('customer-name').value.trim();
-  const phone = document.getElementById('customer-phone').value.trim();
-  const wOld = +document.getElementById('water-old').value;
-  const wNew = +document.getElementById('water-new').value;
-  const eOld = +document.getElementById('electric-old').value;
-  const eNew = +document.getElementById('electric-new').value;
-
-  let invoiceNo = saveBtn.dataset.invoiceNo;
-  if (!isEdit) {
-    invoiceNo = generateInvoiceNumber(room, month);
-  }
-
-  // ⏳ បង្ហាញ Overlay Spinner
-  showLoading();
+  btn.disabled = true;
+  btn.textContent = '⏳ កំពុងចូល...';
+  error.textContent = '';
 
   try {
-    await db.collection('invoices').doc(invoiceNo).set({
-      invoiceNo, room, month, customerName: name, customerPhone: phone,
-      waterOld: wOld, waterNew: wNew, electricOld: eOld, electricNew: eNew,
+    await auth.signInWithEmailAndPassword(email, password);
+    loginAttempts = 0;
+  } catch (e) {
+    loginAttempts++;
+    if (loginAttempts >= maxLoginAttempts) {
+      lockLogin();
+      error.textContent = '🚫 អ្នកបានចូលខុស ៥ ដង សូមរង់ចាំមុនព្យាយាមម្តងទៀត';
+    } else {
+      error.textContent = e.code === 'auth/invalid-email' ? 'អ៊ីម៉ែលមិនត្រឹមត្រូវ'
+        : (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found')
+          ? 'អ៊ីម៉ែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ'
+          : 'អ៊ីម៉ែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ  ';
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔐 ចូល';
+  }
+}
+
+
+async function register() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if (!email || !password) return alert('សូមបញ្ចូលអ៊ីម៉ែល និងពាក្យសម្ងាត់');
+
+  try {
+    await auth.createUserWithEmailAndPassword(email, password);
+    alert('✅ បានបង្កើតគណនី! សូមចូលម្តងទៀត');
+  } catch (e) {
+    alert('បញ្ហា: ' + e.message);
+  }
+}
+
+function logout() {
+  auth.signOut().then(() => location.reload());
+}
+
+// ==== Invoice Section ====
+function resetForm() {
+  document.getElementById('invoice-form').reset();
+  document.getElementById('customer-name').value = '';
+  document.getElementById('customer-phone').value = '';
+}
+
+function validateInvoiceForm() {
+  const month = document.getElementById('month').value;
+  const room = document.getElementById('room').value;
+  const waterOld = document.getElementById('water-old').value;
+  const waterNew = document.getElementById('water-new').value;
+  const electricOld = document.getElementById('electric-old').value;
+  const electricNew = document.getElementById('electric-new').value;
+
+  if (!month || !room) return alert('សូមជ្រើសខែ និង បន្ទប់'), false;
+  if (!waterOld || waterOld < 0) return alert('សូមបញ្ចូលទឹកចាស់ត្រឹមត្រូវ'), false;
+  if (!waterNew || waterNew < waterOld) return alert('ទឹកថ្មីត្រូវធំជាងទឹកចាស់'), false;
+  if (!electricOld || electricOld < 0) return alert('សូមបញ្ចូលភ្លើងចាស់ត្រឹមត្រូវ'), false;
+  if (!electricNew || electricNew < electricOld) return alert('ភ្លើងថ្មីត្រូវធំជាងចាស់'), false;
+
+  return true;
+}
+
+async function saveData() {
+  if (!validateInvoiceForm()) return;
+
+  const month = document.getElementById('month').value;
+  const room = document.getElementById('room').value;
+  const waterOld = Number(document.getElementById('water-old').value);
+  const waterNew = Number(document.getElementById('water-new').value);
+  const electricOld = Number(document.getElementById('electric-old').value);
+  const electricNew = Number(document.getElementById('electric-new').value);
+  const customerName = document.getElementById('customer-name').value;
+  const customerPhone = document.getElementById('customer-phone').value;
+  const invoiceId = `${month}-${room}`;
+
+  try {
+    showLoading(true);
+    await db.collection('invoices').doc(invoiceId).set({
+      month, room, waterOld, waterNew, electricOld, electricNew,
+      customerName, customerPhone,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  
-    clearForm();
-    saveBtn.textContent = "💾 រក្សាទុក";
-    saveBtn.dataset.editing = "false";
-    saveBtn.dataset.invoiceNo = "";
+    alert('✅ បានរក្សាទុកវិក្កយបត្រ');
+    resetForm();
+
+    // ✅ បន្ទាប់ពីរក្សាទុក → បង្ហាញទិន្នន័យវិញ
     loadData();
-    toggleView('form');
+
   } catch (e) {
-    alert("មានបញ្ហាក្នុងការរក្សាទុក: " + e.message);
+    alert('មានបញ្ហា: ' + e.message);
   } finally {
-    // ✅ បិទ Overlay Spinner
-    hideLoading();
+    showLoading(false);
   }
 }
 
-
-// Load invoices for history
 async function loadData() {
   const tbody = document.getElementById('history-tbody');
-  tbody.innerHTML = `<tr><td colspan="6" class="text-center">🔄 កំពុងទាញទិន្នន័យ...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="6">⏳ កំពុងផ្ទុកទិន្នន័យ...</td></tr>`;
 
   const filterRoom = document.getElementById('filter-room').value;
   const filterMonth = document.getElementById('filter-month').value;
@@ -818,380 +720,222 @@ async function loadData() {
   let query = db.collection('invoices');
   if (filterRoom) query = query.where('room', '==', filterRoom);
   if (filterMonth) query = query.where('month', '==', filterMonth);
-  query = query.orderBy('timestamp', 'desc');
 
   try {
-    const snap = await query.get();
-    if (snap.empty) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center">❌ គ្មានទិន្នន័យ</td></tr>`;
+    const snapshot = await query.orderBy('timestamp', 'desc').get();
+    if (snapshot.empty) {
+      tbody.innerHTML = `<tr><td colspan="6">គ្មានវិក្កយបត្រ</td></tr>`;
       return;
     }
-
-    tbody.innerHTML = ''; // Clear loading row
-
-    snap.forEach(doc => {
-      const d = doc.data();
-      const dateStr = d.timestamp?.toDate().toLocaleString() || '';
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${d.invoiceNo}</td>
-        <td>${d.customerName}</td>
-        <td>${d.room}</td>
-        <td>${d.month}</td>
-        <td>${dateStr}</td>
-        <td>
-          <button class="btn btn-sm btn-outline-success me-1" onclick="printInvoice(event, '${d.invoiceNo}')">🖨️</button>
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="editInvoice(event, '${d.invoiceNo}')">✏️</button>
-          <button class="btn btn-sm btn-outline-danger" onclick="deleteInvoice(event, '${d.invoiceNo}')">🗑️</button>
-        </td>
-      `;
-      tr.classList.add('pointer');
-      tr.addEventListener('click', e => {
-        if (!['button', 'svg', 'path'].includes(e.target.tagName.toLowerCase())) {
-          showModal(d);
-        }
-      });
-      tbody.appendChild(tr);
+    tbody.innerHTML = '';
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString() : '';
+      tbody.innerHTML += `
+        <tr>
+          <td>${doc.id}</td>
+          <td>${data.customerName || ''}</td>
+          <td>${data.room || ''}</td>
+          <td>${data.month || ''}</td>
+          <td>${date}</td>
+          <td><button class="btn btn-info btn-sm" onclick="showInvoice('${doc.id}')">មើល</button></td>
+        </tr>`;
     });
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">❌ បញ្ហា៖ ${e.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error: ${e.message}</td></tr>`;
+  }
+}
+
+async function showInvoice(docId) {
+  try {
+    showLoading(true);
+    const doc = await db.collection('invoices').doc(docId).get();
+    if (!doc.exists) return alert('វិក្កយបត្រមិនមាន');
+
+    const data = doc.data();
+    document.getElementById('modal-content').textContent = `
+    វិក្កយបត្រ៖ ${doc.id}
+    អតិថិជន៖ ${data.customerName || ''}
+    បន្ទប់៖ ${data.room || ''}
+    ខែ៖ ${data.month || ''}
+    ទឹកចាស់៖ ${data.waterOld || 0}
+    ទឹកថ្មី៖ ${data.waterNew || 0}
+    ភ្លើងចាស់៖ ${data.electricOld || 0}
+    ភ្លើងថ្មី៖ ${data.electricNew || 0}
+    ថ្ងៃបង្កើត៖ ${data.timestamp?.toDate().toLocaleString() || ''}`;
+    openModal();
+  } catch (e) {
+    alert('មានបញ្ហា: ' + e.message);
+  } finally {
+    showLoading(false);
+  }
+}
+
+function openModal() {
+  document.getElementById('invoice-modal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('invoice-modal').style.display = 'none';
+}
+
+function printModalContent() {
+  const content = document.getElementById('modal-content').textContent;
+  const win = window.open('', '', 'width=600,height=400');
+  win.document.write(`<pre style="font-family:'Khmer OS Battambang';font-size:16px;">${content}</pre>`);
+  win.document.close();
+  win.focus();
+  win.print();
+  win.close();
+}
+
+// ==== Customer Section ====
+async function autoFillCustomerInfo() {
+  const room = document.getElementById('room').value;
+  if (!room) {
+    document.getElementById('customer-name').value = '';
+    document.getElementById('customer-phone').value = '';
+    return;
+  }
+
+  try {
+    const snapshot = await db.collection('customers').where('room', '==', room).limit(1).get();
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
+      document.getElementById('customer-name').value = data.name || '';
+      document.getElementById('customer-phone').value = data.phone || '';
+    } else {
+      document.getElementById('customer-name').value = '';
+      document.getElementById('customer-phone').value = '';
+    }
+  } catch (e) {
+    console.error('Error loading customer:', e);
   }
 }
 
 
-  // Show invoice details in modal
-  function showModal(data) {
-    const modal = document.getElementById('invoice-modal');
-    const content = document.getElementById('modal-content');
+async function updateCustomer() {
+  const room = document.getElementById('edit-room').value;
+  const name = document.getElementById('edit-customer-name').value.trim();
+  const phone = document.getElementById('edit-customer-phone').value.trim();
+  const spinner = document.getElementById('save-spinner');
+  const btnText = document.getElementById('save-btn-text');
 
-    const invoiceText = `
-វិក្កយបត្រ: ${data.invoiceNo}
-អតិថិជន: ${data.customerName}
-លេខទូរស័ព្ទ: ${data.customerPhone}
-បន្ទប់: បន្ទប់ ${data.room}
-ខែ: ${data.month}
-ទឹកចាស់: ${data.waterOld}
-ទឹកថ្មី: ${data.waterNew}
-ភ្លើងចាស់: ${data.electricOld}
-ភ្លើងថ្មី: ${data.electricNew}
-ថ្ងៃបញ្ចូល: ${data.timestamp?.toDate().toLocaleString() || ''}
-`;
+  if (!room || !name) return alert('សូមបញ្ចូលពត៌មានអតិថិជន');
 
-    content.textContent = invoiceText;
-    modal.style.display = 'block';
-  }
+  spinner.classList.remove('d-none');
+  btnText.textContent = 'កំពុងរក្សាទុក...';
 
-  // Close modal
-  function closeModal() {
-    document.getElementById('invoice-modal').style.display = 'none';
-  }
-
-  // Print modal content
-  function printModalContent() {
-    const content = document.getElementById('modal-content').textContent;
-    const w = window.open('', '', 'width=600,height=600');
-    w.document.write('<pre style="font-family: khmer OS Battambang, Arial; font-size: 16px;">' + content + '</pre>');
-    w.document.close();
-    w.focus();
-    w.print();
-    w.close();
-  }
-
-  // Print invoice by invoiceNo
-  async function printInvoice(event, invoiceNo) {
-    event.stopPropagation();
-    try {
-      const doc = await db.collection('invoices').doc(invoiceNo).get();
-      if (!doc.exists) return alert("Invoice មិនមាន");
-      showModal(doc.data());
-    } catch(e) {
-      alert("Error: " + e.message);
+  try {
+    const snapshot = await db.collection('customers').where('room', '==', room).limit(1).get();
+    if (!snapshot.empty) {
+      await db.collection('customers').doc(snapshot.docs[0].id).update({ name, phone, room });
+    } else {
+      await db.collection('customers').add({ name, phone, room });
     }
+    alert('✅ បានរក្សាទុក');
+    loadCustomerList();
+  } catch (e) {
+    alert('❌ បញ្ហា: ' + e.message);
+  } finally {
+    spinner.classList.add('d-none');
+    btnText.textContent = '💾 បញ្ចូល / កែប្រែ';
   }
+}
 
-  // Edit invoice by invoiceNo
-  async function editInvoice(event, invoiceNo) {
-    event.stopPropagation();
-    try {
-      const doc = await db.collection('invoices').doc(invoiceNo).get();
-      if (!doc.exists) return alert("Invoice មិនមាន");
+async function deleteCustomer(docId) {
+  if (!confirm('តើអ្នកពិតជាចង់លុប?')) return;
+  try {
+    await db.collection('customers').doc(docId).delete();
+    alert('✅ បានលុបអតិថិជន');
+    loadCustomerList();
+  } catch (e) {
+    alert('មានបញ្ហា: ' + e.message);
+  }
+}
 
-      const d = doc.data();
-
-      toggleView('form');
-      document.getElementById('month').value = d.month;
-      document.getElementById('room').value = d.room;
-      document.getElementById('customer-name').value = d.customerName;
-      document.getElementById('customer-phone').value = d.customerPhone;
-      document.getElementById('water-old').value = d.waterOld;
-      document.getElementById('water-new').value = d.waterNew;
-      document.getElementById('electric-old').value = d.electricOld;
-      document.getElementById('electric-new').value = d.electricNew;
-
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.textContent = "💾 កែប្រែ";
-      saveBtn.dataset.editing = "true";
-      saveBtn.dataset.invoiceNo = invoiceNo;
-    } catch(e) {
-      alert("Error: " + e.message);
+async function loadCustomerList() {
+  toggleView('edit-customer');
+  const tbody = document.getElementById('customer-table-body');
+  tbody.innerHTML = '⏳ កំពុងផ្ទុក...';
+  try {
+    const snapshot = await db.collection('customers').orderBy('room').get();
+    if (snapshot.empty) {
+      tbody.innerHTML = '<tr><td colspan="4">មិនមានអតិថិជន</td></tr>';
+      return;
     }
+    let rows = '';
+    snapshot.forEach(doc => {
+      const c = doc.data();
+      rows += `
+        <tr>
+          <td>${c.room || ''}</td>
+          <td>${c.name || ''}</td>
+          <td>${c.phone || ''}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="editCustomer('${doc.id}')">កែ</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${doc.id}')">លុប</button>
+          </td>
+        </tr>`;
+    });
+    tbody.innerHTML = rows;
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error: ${e.message}</td></tr>`;
   }
+}
 
-  // Delete invoice by invoiceNo
-  async function deleteInvoice(event, invoiceNo) {
-    event.stopPropagation();
-    if (!confirm("តើអ្នកប្រាកដជាលុបវិក្កយបត្រនេះ?")) return;
-    try {
-      await db.collection('invoices').doc(invoiceNo).delete();
-      alert("✅ បានលុបវិក្កយបត្រ");
-      loadData();
-    } catch(e) {
-      alert("Error: " + e.message);
-    }
+async function editCustomer(docId) {
+  try {
+    const doc = await db.collection('customers').doc(docId).get();
+    if (!doc.exists) return alert('អតិថិជនមិនមាន');
+    const data = doc.data();
+    document.getElementById('edit-room').value = data.room || '';
+    document.getElementById('edit-customer-name').value = data.name || '';
+    document.getElementById('edit-customer-phone').value = data.phone || '';
+    toggleView('edit-customer');
+  } catch (e) {
+    alert('Error: ' + e.message);
   }
+}
 
-  // On auth state changed
+// ==== Side Menu ====
+function toggleMenu() {
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+  if (sideMenu.style.width === '250px') {
+    sideMenu.style.width = '0';
+    overlay.style.display = 'none';
+  } else {
+    sideMenu.style.width = '250px';
+    overlay.style.display = 'block';
+  }
+}
+document.getElementById('overlay').addEventListener('click', toggleMenu);
+
+// ==== Init ====
+window.addEventListener('DOMContentLoaded', () => {
   auth.onAuthStateChanged(user => {
     if (user) {
       document.getElementById('login-card').style.display = 'none';
       document.getElementById('form-card').style.display = 'block';
       document.getElementById('menu-toggle').style.display = 'block';
       document.getElementById('user-email').textContent = user.email;
-      const view = localStorage.getItem('currentView') || 'form';
-      toggleView(view);
+      toggleView('form');
+      loadData();
     } else {
       document.getElementById('login-card').style.display = 'block';
       document.getElementById('form-card').style.display = 'none';
       document.getElementById('menu-toggle').style.display = 'none';
     }
   });
-
-  // On page load
-  window.onload = () => {
-    // Hide menu on small screen init
-    document.getElementById('side-menu').style.width = '0';
-  };
-
-
-
-
-
-
-
-
-function resetForm() {
-  clearForm();
-  const saveBtn = document.getElementById('save-btn');
-  saveBtn.textContent = "💾 រក្សាទុក";
-  saveBtn.dataset.editing = "false";
-  saveBtn.dataset.invoiceNo = "";
-}
-function clearForm() {
-  ['month', 'room', 'customer-name', 'customer-phone', 'water-old', 'water-new', 'electric-old', 'electric-new'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Load customer for selected room
-function loadCustomerInfo() {
-  const room = document.getElementById('edit-room').value;
-  if (!room) return;
-
-  db.collection("customers").doc(room).get().then(doc => {
-    if (doc.exists) {
-      const data = doc.data();
-      document.getElementById('edit-customer-name').value = data.name || '';
-      document.getElementById('edit-customer-phone').value = data.phone || '';
-    } else {
-      document.getElementById('edit-customer-name').value = '';
-      document.getElementById('edit-customer-phone').value = '';
-    }
-  }).catch(err => {
-    alert("Error loading customer: " + err.message);
-  });
-}
-
-function loadAllCustomers() {
-  const tbody = document.getElementById("customer-table-body");
-  
-  // បង្ហាញសារកំពុងដំណើរការ
-  tbody.innerHTML = '<tr><td colspan="3" class="text-center">កំពុងដំណើរការ...</td></tr>';
-  
-  db.collection("customers").orderBy("name").get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        tbody.innerHTML = `<tr><td colspan="3" class="text-center">គ្មានទិន្នន័យ</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = ''; // លុបសារកំពុងដំណើរការ
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>បន្ទប់ ${doc.id}</td>
-          <td>${d.name}</td>
-          <td>${d.phone}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    })
-    .catch(err => {
-      tbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Error: ${err.message}</td></tr>`;
-    });
-}
-
-
-// Call list when entering view
-function toggleView(view) {
-  document.getElementById('form-card').style.display = (view === 'form' || view === 'history') ? 'block' : 'none';
-  document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
-  document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
-  document.getElementById('edit-customer-card').style.display = (view === 'edit-customer') ? 'block' : 'none';
-
-  if (view === 'history') loadData();
-  if (view === 'edit-customer') {
-    loadCustomerInfo();
-    loadAllCustomers(); // ← this line added
-  }
-
-  localStorage.setItem('currentView', view);
-}
-
-
-
-
-
-function resetForm() {
-  document.getElementById("edit-room").value = "";
-  document.getElementById("edit-customer-name").value = "";
-  document.getElementById("edit-customer-phone").value = "";
-}
-
-function updateCustomer() {
-  const room = document.getElementById("edit-room").value;
-  const name = document.getElementById("edit-customer-name").value.trim();
-  const phone = document.getElementById("edit-customer-phone").value.trim();
-
-  if (!room) return alert("សូមជ្រើសបន្ទប់");
-  if (!name) return alert("សូមបញ្ចូលឈ្មោះអតិថិជន");
-  if (!/^\d{8,9}$/.test(phone)) return alert("លេខទូរស័ព្ទមិនត្រឹមត្រូវ (8 ឬ 9 ខ្ទង់)");
-
-  showLoading(); // ⏳ Show spinner
-
-  db.collection("customers").doc(room).set({
-    name: name,
-    phone: phone
-  }).then(() => {
-    alert("✅ បានរក្សាទុកឬកែប្រែអតិថិជន");
-    loadAllCustomers();
-    resetForm();
-  }).catch(err => {
-    alert("បញ្ហាក្នុងការរក្សាទុក: " + err.message);
-  }).finally(() => {
-    hideLoading(); // ✅ Hide spinner
-  });
-}
-function showLoading() {
-  document.getElementById("loading-overlay").style.display = "block";
-}
-
-function hideLoading() {
-  document.getElementById("loading-overlay").style.display = "none";
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function autoFillCustomerInfo() {
-  const room = document.getElementById("room").value;
-  if (!room) {
-    document.getElementById("customer-name").value = "";
-    document.getElementById("customer-phone").value = "";
-    return;
-  }
-
-  db.collection("customers").doc(room).get().then(doc => {
-    if (doc.exists) {
-      const data = doc.data();
-      document.getElementById("customer-name").value = data.name || "";
-      document.getElementById("customer-phone").value = data.phone || "";
-    } else {
-      document.getElementById("customer-name").value = "";
-      document.getElementById("customer-phone").value = "";
-    }
-  }).catch(err => {
-    alert("បញ្ហា៖ " + err.message);
-  });
-}
-
-
-
-
+});
+</script>
 
 
 
 
 
 </script>
-
-
 
 
 
