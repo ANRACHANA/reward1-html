@@ -182,14 +182,6 @@
 }
 
 
-
-
-
-
-
-
-
-
 </style>
 
 
@@ -204,6 +196,9 @@
 
 </head>
 <body>
+
+
+
 
 <!-- Menu Toggle Button -->
 <button id="menu-toggle" class="btn btn-primary" onclick="toggleMenu()">☰</button>
@@ -520,9 +515,7 @@
 
 
 
-
-
-
+ 
 
 <script>
 // ==== Firebase Config & Init ====
@@ -651,6 +644,16 @@ async function register() {
 function logout() {
   auth.signOut().then(() => location.reload());
 }
+
+
+
+
+
+
+
+
+
+
 
 // ==== Invoice Section ====
 function resetForm() {
@@ -915,19 +918,21 @@ document.getElementById('overlay').addEventListener('click', toggleMenu);
 // ==== Init ====
 window.addEventListener('DOMContentLoaded', () => {
   auth.onAuthStateChanged(user => {
-    if (user) {
-      document.getElementById('login-card').style.display = 'none';
-      document.getElementById('form-card').style.display = 'block';
-      document.getElementById('menu-toggle').style.display = 'block';
-      document.getElementById('user-email').textContent = user.email;
-      toggleView('form');
-      loadData();
-    } else {
-      document.getElementById('login-card').style.display = 'block';
-      document.getElementById('form-card').style.display = 'none';
-      document.getElementById('menu-toggle').style.display = 'none';
-    }
-  });
+  if (user) {
+    document.getElementById('login-card').style.display = 'none';
+    document.getElementById('form-card').style.display = 'block';
+    document.getElementById('menu-toggle').style.display = 'block';
+    document.getElementById('user-email').textContent = user.email;
+    toggleView('form');
+    loadData();
+    loadCustomerList(); // 👉 បន្ថែមនេះ ដើម្បីបង្ហាញតារាងអតិថិជនអូតូ
+  } else {
+    document.getElementById('login-card').style.display = 'block';
+    document.getElementById('form-card').style.display = 'none';
+    document.getElementById('menu-toggle').style.display = 'none';
+  }
+});
+
 });
 </script>
 
@@ -935,7 +940,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-</script>
 
 
 
