@@ -182,14 +182,6 @@
 }
 
 
-
-
-
-
-
-
-
-
 </style>
 
 
@@ -204,6 +196,9 @@
 
 </head>
 <body>
+
+
+
 
 <!-- Menu Toggle Button -->
 <button id="menu-toggle" class="btn btn-primary" onclick="toggleMenu()">☰</button>
@@ -286,8 +281,7 @@
     <button type="button" class="btn btn-primary my-3" onclick="toggleView('form')">➕ បញ្ចូលវិក្កយបត្រ</button>
     <button type="button" class="btn btn-success my-3" onclick="toggleView('history')">📋 ប្រវត្តិ</button>
 
-  <button class="btn btn-primary my-3" onclick="loadCustomerList('edit-customer')">បង្ហាញអតិថិជន</button>
-
+   <button class="btn btn-primary my-3" onclick="loadCustomerList('edit-customer')">បង្ហាញអតិថិជន</button>
 
   <button type="button" class="btn btn-outline-danger my-3"onclick="logout()">ចាក់ចេញ</button>
   </div>
@@ -521,42 +515,67 @@
 
 
 
-
-
-
+ 
 
 <script>
-// ==== Firebase Config & Init ====
+// ===== Firebase Config & Init =====
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBt_ScEi_StJ0wQDP-gZwMWmy5A7HqEcXE",
-  authDomain: "invoice-77616.firebaseapp.com",
-  projectId: "invoice-77616",
-  storageBucket: "invoice-77616.appspot.com",
-  messagingSenderId: "91579214593",
-  appId: "1:91579214593:web:eca7aad598915de58ec900"
+  apiKey: "AIzaSyD61vUNw4gFmzR4zfS8s7FVIzsJe9nXQHQ",
+  authDomain: "home-invoice-e1f43.firebaseapp.com",
+  projectId: "home-invoice-e1f43",
+  storageBucket: "home-invoice-e1f43.firebasestorage.app",
+  messagingSenderId: "243294137874",
+  appId: "1:243294137874:web:8bdc0aab16ca58f4d932cb",
+  measurementId: "G-86XF4PCKG6"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// ==== Global Variables ====
+// ===== Global Variables =====
 let loginAttempts = 0;
 const maxLoginAttempts = 5;
 const lockSeconds = 60;
 
-// ==== UI Utilities ====
+// ===== UI Helpers =====
 function toggleView(view) {
-      document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
-      document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
-      document.getElementById('edit-customer-card').style.display = (view === 'edit-customer') ? 'block' : 'none';
-    }
+  document.getElementById('form-view').style.display = (view === 'form') ? 'block' : 'none';
+  document.getElementById('history-view').style.display = (view === 'history') ? 'block' : 'none';
+  document.getElementById('edit-customer-card').style.display = (view === 'edit-customer') ? 'block' : 'none';
 
-    function loadCustomerList(view) {
-      toggleView(view);
-      console.log("Loading customer list...");
-      // Add logic to load data here
-    }
-// ==== Login System ====
+  if(view === 'form') resetForm();
+
+  if(view === 'history') {
+    loadData();  // បន្ថែមនេះដើម្បីបញ្ចូលទិន្នន័យភ្លាមៗ
+  }
+  
+  if (view === 'edit-customer') {
+    loadCustomerList();
+    clearEditCustomerForm();
+  }
+}
+
+
+function toggleMenu() {
+  const menu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+  if (menu.style.width === '250px') {
+    menu.style.width = '0';
+    overlay.style.display = 'none';
+  } else {
+    menu.style.width = '250px';
+    overlay.style.display = 'block';
+  }
+}
+
+document.getElementById('overlay').onclick = toggleMenu;
+
+function showLoading(show) {
+  document.getElementById('loading-overlay').style.display = show ? 'block' : 'none';
+}
+
+// ===== Login System =====
 function togglePassword() {
   const input = document.getElementById('password');
   const eye = document.getElementById('toggle-eye');
@@ -626,7 +645,7 @@ async function login() {
       error.textContent = e.code === 'auth/invalid-email' ? 'អ៊ីម៉ែលមិនត្រឹមត្រូវ'
         : (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found')
           ? 'អ៊ីម៉ែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ'
-          : 'មានបញ្ហា: ' + e.message;
+          : 'អ៊ីម៉ែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ';
     }
   } finally {
     btn.disabled = false;
@@ -638,7 +657,10 @@ async function register() {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value.trim();
 
-  if (!email || !password) return alert('សូមបញ្ចូលអ៊ីម៉ែល និងពាក្យសម្ងាត់');
+  if (!email || !password) {
+    alert('សូមបញ្ចូលអ៊ីម៉ែល និងពាក្យសម្ងាត់');
+    return;
+  }
 
   try {
     await auth.createUserWithEmailAndPassword(email, password);
@@ -652,7 +674,7 @@ function logout() {
   auth.signOut().then(() => location.reload());
 }
 
-// ==== Invoice Section ====
+// ===== Invoice Section =====
 function resetForm() {
   document.getElementById('invoice-form').reset();
   document.getElementById('customer-name').value = '';
@@ -667,11 +689,26 @@ function validateInvoiceForm() {
   const electricOld = document.getElementById('electric-old').value;
   const electricNew = document.getElementById('electric-new').value;
 
-  if (!month || !room) return alert('សូមជ្រើសខែ និង បន្ទប់'), false;
-  if (!waterOld || waterOld < 0) return alert('សូមបញ្ចូលទឹកចាស់ត្រឹមត្រូវ'), false;
-  if (!waterNew || waterNew < waterOld) return alert('ទឹកថ្មីត្រូវធំជាងទឹកចាស់'), false;
-  if (!electricOld || electricOld < 0) return alert('សូមបញ្ចូលភ្លើងចាស់ត្រឹមត្រូវ'), false;
-  if (!electricNew || electricNew < electricOld) return alert('ភ្លើងថ្មីត្រូវធំជាងចាស់'), false;
+  if (!month || !room) {
+    alert('សូមជ្រើសខែ និង បន្ទប់');
+    return false;
+  }
+  if (waterOld === '' || waterOld < 0) {
+    alert('សូមបញ្ចូលទឹកចាស់ត្រឹមត្រូវ');
+    return false;
+  }
+  if (waterNew === '' || waterNew < waterOld) {
+    alert('ទឹកថ្មីត្រូវធំជាងទឹកចាស់');
+    return false;
+  }
+  if (electricOld === '' || electricOld < 0) {
+    alert('សូមបញ្ចូលភ្លើងចាស់ត្រឹមត្រូវ');
+    return false;
+  }
+  if (electricNew === '' || electricNew < electricOld) {
+    alert('ភ្លើងថ្មីត្រូវធំជាងចាស់');
+    return false;
+  }
 
   return true;
 }
@@ -696,8 +733,11 @@ async function saveData() {
       customerName, customerPhone,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
+
     alert('✅ បានរក្សាទុកវិក្កយបត្រ');
     resetForm();
+
+    loadData();
   } catch (e) {
     alert('មានបញ្ហា: ' + e.message);
   } finally {
@@ -749,15 +789,16 @@ async function showInvoice(docId) {
 
     const data = doc.data();
     document.getElementById('modal-content').textContent = `
-    វិក្កយបត្រ៖ ${doc.id}
-    អតិថិជន៖ ${data.customerName || ''}
-    បន្ទប់៖ ${data.room || ''}
-    ខែ៖ ${data.month || ''}
-    ទឹកចាស់៖ ${data.waterOld || 0}
-    ទឹកថ្មី៖ ${data.waterNew || 0}
-    ភ្លើងចាស់៖ ${data.electricOld || 0}
-    ភ្លើងថ្មី៖ ${data.electricNew || 0}
-    ថ្ងៃបង្កើត៖ ${data.timestamp?.toDate().toLocaleString() || ''}`;
+វិក្កយបត្រ៖ ${doc.id}
+អតិថិជន៖ ${data.customerName || ''}
+បន្ទប់៖ ${data.room || ''}
+ខែ៖ ${data.month || ''}
+ទឹកចាស់៖ ${data.waterOld || 0}
+ទឹកថ្មី៖ ${data.waterNew || 0}
+ភ្លើងចាស់៖ ${data.electricOld || 0}
+ភ្លើងថ្មី៖ ${data.electricNew || 0}
+ថ្ងៃបង្កើត៖ ${data.timestamp?.toDate().toLocaleString() || ''}
+    `;
     openModal();
   } catch (e) {
     alert('មានបញ្ហា: ' + e.message);
@@ -784,7 +825,7 @@ function printModalContent() {
   win.close();
 }
 
-// ==== Customer Section ====
+// ===== Customer Section =====
 async function autoFillCustomerInfo() {
   const room = document.getElementById('room').value;
   if (!room) {
@@ -808,129 +849,177 @@ async function autoFillCustomerInfo() {
   }
 }
 
+async function loadCustomerInfo() {
+  const room = document.getElementById('edit-room').value;
+  if (!room) {
+    clearEditCustomerForm();
+    return;
+  }
+  try {
+    const snapshot = await db.collection('customers').where('room', '==', room).limit(1).get();
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
+      document.getElementById('edit-customer-name').value = data.name || '';
+      document.getElementById('edit-customer-phone').value = data.phone || '';
+    } else {
+      clearEditCustomerForm();
+    }
+  } catch (e) {
+    console.error('Error loading customer info:', e);
+  }
+}
+
+function clearEditCustomerForm() {
+  document.getElementById('edit-customer-name').value = '';
+  document.getElementById('edit-customer-phone').value = '';
+}
 
 async function updateCustomer() {
   const room = document.getElementById('edit-room').value;
   const name = document.getElementById('edit-customer-name').value.trim();
   const phone = document.getElementById('edit-customer-phone').value.trim();
+
+  if (!room) {
+    alert('សូមជ្រើសបន្ទប់');
+    return;
+  }
+  if (!name) {
+    alert('សូមបញ្ចូលឈ្មោះអតិថិជន');
+    return;
+  }
+  if (!phone) {
+    alert('សូមបញ្ចូលលេខទូរស័ព្ទ');
+    return;
+  }
+
+  const btn = document.getElementById('save-customer-btn');
   const spinner = document.getElementById('save-spinner');
   const btnText = document.getElementById('save-btn-text');
 
-  if (!room || !name) return alert('សូមបញ្ចូលពត៌មានអតិថិជន');
-
+  btn.disabled = true;
   spinner.classList.remove('d-none');
   btnText.textContent = 'កំពុងរក្សាទុក...';
 
   try {
+    // Check if a customer doc exists for this room
     const snapshot = await db.collection('customers').where('room', '==', room).limit(1).get();
+
     if (!snapshot.empty) {
-      await db.collection('customers').doc(snapshot.docs[0].id).update({ name, phone, room });
+      // Update existing
+      await db.collection('customers').doc(snapshot.docs[0].id).set({ room, name, phone });
     } else {
-      await db.collection('customers').add({ name, phone, room });
+      // Create new
+      await db.collection('customers').add({ room, name, phone });
     }
-    alert('✅ បានរក្សាទុក');
+
+    alert('✅ បានរក្សាទុកអតិថិជន');
     loadCustomerList();
   } catch (e) {
-    alert('❌ បញ្ហា: ' + e.message);
+    alert('មានបញ្ហា: ' + e.message);
   } finally {
+    btn.disabled = false;
     spinner.classList.add('d-none');
     btnText.textContent = '💾 បញ្ចូល / កែប្រែ';
   }
 }
 
+async function loadCustomerList() {
+  const tbody = document.getElementById('customer-table-body');
+  tbody.innerHTML = '<tr><td colspan="4">⏳ កំពុងផ្ទុក...</td></tr>';
+
+  try {
+    const snapshot = await db.collection('customers').orderBy('room').get();
+    if (snapshot.empty) {
+      tbody.innerHTML = '<tr><td colspan="4">គ្មានអតិថិជន</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      tbody.innerHTML += `
+      <tr>
+        <td>${data.room}</td>
+        <td>${data.name}</td>
+        <td>${data.phone}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${doc.id}')">លុប</button>
+        </td>
+      </tr>`;
+    });
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error: ${e.message}</td></tr>`;
+  }
+}
+
 async function deleteCustomer(docId) {
-  if (!confirm('តើអ្នកពិតជាចង់លុប?')) return;
+  if (!confirm('តើអ្នកចង់លុបអតិថិជននេះមែនទេ?')) return;
+
   try {
     await db.collection('customers').doc(docId).delete();
-    alert('✅ បានលុបអតិថិជន');
+    alert('✅ លុបបានជោគជ័យ');
     loadCustomerList();
   } catch (e) {
     alert('មានបញ្ហា: ' + e.message);
   }
 }
 
-async function loadCustomerList() {
-  toggleView('edit-customer');
-  const tbody = document.getElementById('customer-table-body');
-  tbody.innerHTML = '⏳ កំពុងផ្ទុក...';
-  try {
-    const snapshot = await db.collection('customers').orderBy('room').get();
-    if (snapshot.empty) {
-      tbody.innerHTML = '<tr><td colspan="4">មិនមានអតិថិជន</td></tr>';
-      return;
+// ===== Auth State Listener =====
+auth.onAuthStateChanged(async user => {
+  const loginSection = document.getElementById('login-card');
+  const appSection = document.getElementById('form-card');
+  const userEmailDiv = document.getElementById('user-email');
+
+  if (user) {
+    loginSection.style.display = 'none';
+    appSection.style.display = 'block';
+    userEmailDiv.textContent = user.email;
+
+    try {
+      // ព្យាយាម Enable Firebase Network នៅពេល user login
+      await firebase.firestore().enableNetwork();
+    } catch (e) {
+      console.error('Enable network error:', e.message);
     }
-    let rows = '';
-    snapshot.forEach(doc => {
-      const c = doc.data();
-      rows += `
-        <tr>
-          <td>${c.room || ''}</td>
-          <td>${c.name || ''}</td>
-          <td>${c.phone || ''}</td>
-          <td>
-            <button class="btn btn-primary btn-sm" onclick="editCustomer('${doc.id}')">កែ</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${doc.id}')">លុប</button>
-          </td>
-        </tr>`;
-    });
-    tbody.innerHTML = rows;
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error: ${e.message}</td></tr>`;
-  }
-}
 
-async function editCustomer(docId) {
-  try {
-    const doc = await db.collection('customers').doc(docId).get();
-    if (!doc.exists) return alert('អតិថិជនមិនមាន');
-    const data = doc.data();
-    document.getElementById('edit-room').value = data.room || '';
-    document.getElementById('edit-customer-name').value = data.name || '';
-    document.getElementById('edit-customer-phone').value = data.phone || '';
-    toggleView('edit-customer');
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-}
-
-// ==== Side Menu ====
-function toggleMenu() {
-  const sideMenu = document.getElementById('side-menu');
-  const overlay = document.getElementById('overlay');
-  if (sideMenu.style.width === '250px') {
-    sideMenu.style.width = '0';
-    overlay.style.display = 'none';
+    toggleView('form');
   } else {
-    sideMenu.style.width = '250px';
-    overlay.style.display = 'block';
-  }
-}
-document.getElementById('overlay').addEventListener('click', toggleMenu);
+    loginSection.style.display = 'block';
+    appSection.style.display = 'none';
 
-// ==== Init ====
-window.addEventListener('DOMContentLoaded', () => {
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      document.getElementById('login-card').style.display = 'none';
-      document.getElementById('form-card').style.display = 'block';
-      document.getElementById('menu-toggle').style.display = 'block';
-      document.getElementById('user-email').textContent = user.email;
-      toggleView('form');
-      loadData();
-    } else {
-      document.getElementById('login-card').style.display = 'block';
-      document.getElementById('form-card').style.display = 'none';
-      document.getElementById('menu-toggle').style.display = 'none';
+    try {
+      // បើ user logout ឬ disconnected, បិទ Network Firebase
+      await firebase.firestore().disableNetwork();
+    } catch (e) {
+      console.error('Disable network error:', e.message);
     }
-  });
+  }
 });
+
+
+// ===== Initialization =====
+document.getElementById('toggle-eye').addEventListener('click', togglePassword);
+document.getElementById('login-btn').addEventListener('click', login);
+document.querySelector('button[onclick="register()"]').addEventListener('click', register);
+
+document.getElementById('save-btn').addEventListener('click', e => { e.preventDefault(); saveData(); });
+document.getElementById('reset-invoice-btn')?.addEventListener('click', resetForm);
+
+document.getElementById('filter-room').addEventListener('change', loadData);
+document.getElementById('filter-month').addEventListener('change', loadData);
+
+document.getElementById('room').addEventListener('change', autoFillCustomerInfo);
+document.getElementById('edit-room').addEventListener('change', loadCustomerInfo);
+
+document.getElementById('save-customer-btn').addEventListener('click', updateCustomer);
+
 </script>
 
 
 
 
 
-</script>
+
 
 
 
