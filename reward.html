@@ -13,6 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+
   <style>
  /* Reset និង Box sizing */
 *, *::before, *::after {
@@ -370,21 +371,33 @@ body {
 }
 
 
-
 .banner-exchange {
-      background-color: #0d6efd;
-      color: white;
-      font-weight: 500;
-      font-size: 2rem;
-      text-align: center;
-      padding: 2px 2px;
-      border-radius: 8px;
-      max-width: 470px;
-      margin: 0 auto 10px auto;
-      box-shadow: 0 3px 8px rgba(13, 110, 253, 0.6);
-      cursor: pointer;
-      user-select: none;
-    }
+  background-color: #0bb9c4;
+  color: white;
+  font-weight: 500;
+  text-align: center;
+  padding: 4px 8px;
+  max-width: 270px;
+  margin: 0 auto 10px auto;
+  box-shadow: 0 5px 8px rgba(13, 110, 253, 0.6);
+  cursor: pointer;
+  user-select: none;
+  border: 5px solid #d6e8e9;
+  border-radius: 30px;
+  font-size: 18px; /* size អក្សរ 16px */
+ font-weight: bold;
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px #0bb9c4, 0 0 10px #0bb9c4;
+  }
+  50% {
+    box-shadow: 0 0 20px #0bb9c4, 0 0 30px #0bb9c4;
+  }
+}
+
     .card {
       max-width: 720px;
       margin: 20px auto;
@@ -408,6 +421,127 @@ body {
     }
 
 
+
+
+
+
+
+
+
+.button-wrapper {
+  position: relative;
+  overflow: visible;
+  display: inline-block;
+}
+
+.exchange-button {
+  background-color: #0bb9c4;
+  color: white;
+  border: 5px solid #d6e8e9;
+  padding: 17px 85px;
+  font-size: 14px;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* កណ្តាលអក្សរ */
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+  text-align: center;       /* កណ្តាលអក្សរ */
+}
+
+.animated-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  opacity: 0;
+  font-weight: bold;
+  font-size: 1.2em;
+  white-space: nowrap;
+  aria-live: polite;
+}
+
+.animated-container.show {
+  animation: slideUpIn 2s ease forwards;
+  opacity: 1;
+}
+
+.animated-container.hide {
+  animation: slideUpOut 1.5s ease forwards;
+  opacity: 0;
+}
+
+.flag {
+  width: 30px;
+  height: 17px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin: 0;
+  position: relative;
+  top: 3px;
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpOut {
+  from {
+    transform: translateX(-50%) translateY(0%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .exchange-button {
+    flex-direction: column;
+    justify-content: center;  /* កណ្តាលអក្សរ */
+    text-align: center;
+    width: 150px;    /* ប្រសើរជាង 80px */
+    padding: 15px 30px;
+    font-size: 12px;
+    
+    border-radius: 30px;
+  }
+  .animated-container {
+    font-size: 1em;
+    margin-top: 4px;
+  }
+  .flag {
+    width: 30px;
+    height: 15px;
+    top: 2px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 
 
@@ -426,6 +560,8 @@ body {
 
 
 
+
+
 <!-- Menu Toggle Button -->
 <button id="menu-toggle" class="btn btn-primary" onclick="toggleMenu()">☰</button>
 
@@ -433,7 +569,7 @@ body {
 <div id="side-menu" class="side-menu">
   <div class="menu-header">
  
-    <div id="user-email" style="margin-top: 5px; font-size: 12px;"></div>
+  <div id="user-email" style="margin-top: 5px; font-size: 12px;"></div>
   </div>
   <hr />
   <a href="#" onclick="toggleView('form'); toggleMenu()">➕ បញ្ចូលវិក្កយបត្រ</a>
@@ -445,6 +581,7 @@ body {
   <a href="#" onclick="logout()">🚪 ចេញ</a>
 </div>
 <div id="overlay"></div>
+
 
 
 
@@ -498,10 +635,10 @@ body {
 
 
 
-
 <!-- Main Content Card -->
 <div class="card p-4" id="form-card" style="display: none;">
-  
+   
+
   <!-- Buttons menu -->
   <div class="menu-buttons mb-3 justify-content-center">
     <button type="button" class="btn btn-primary my-3" onclick="toggleView('form')">➕ បញ្ចូលវិក្កយបត្រ</button>
@@ -511,6 +648,24 @@ body {
   <button class="btn btn-primary my-3" onclick="toggleView('price')">បង្ហាញអតិថិជន</button>
   <button type="button" class="btn btn-outline-danger my-3"onclick="logout()">ចាក់ចេញ</button>
   </div>
+<div class="button-wrapper" mb-4 text-center>
+    <button class="exchange-button" id="exchangeButton" aria-label="Show exchange rates">
+      <div class="animated-container" id="rateContainer">
+        <!-- អត្រាបង្ហាញនៅទីនេះ -->
+      </div>
+    </button>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
 
   <!-- Form View -->
   <div id="form-view">
@@ -757,10 +912,14 @@ body {
   <!-- Banner for Exchange Rate -->
 <div id="exchange-banner" class="banner-exchange" title="ចុចសម្រាប់មើលប្រវត្តិអត្រាប្ដូរ">
   1 USD = <span id="exchange-rate-banner">កំពុងផ្ទុក...</span> ៛
+
 </div>
 
-<!-- Model Calculator Button -->
-<button id="btnCalculator" class="btn btn-warning btn-lg">🧮 Model Calculator</button>
+
+
+
+
+
 
 <p id="error-message"></p>
 
@@ -786,12 +945,12 @@ body {
     </div>
 
     <div class="mb-3">
-      <label class="form-label">តម្លៃទឹក</label>
+     
       <input type="number" id="waterPrice" class="form-control" placeholder="បញ្ចូលតម្លៃទឹក" min="0" step="any" required />
     </div>
 
     <div class="mb-3">
-      <label class="form-label">តម្លៃភ្លើង</label>
+     
       <input type="number" id="electricPrice" class="form-control" placeholder="បញ្ចូលតម្លៃភ្លើង" min="0" step="any" required />
     </div>
 
@@ -800,6 +959,9 @@ body {
 </div>
 
 <div class="card p-4 mt-4">
+ <h5 class="text-center text-primary mb-3">📋 តម្លៃទឹក-ភ្លើង</h5>
+<!-- Model Calculator Button -->
+<button id="btnCalculator" class="btn btn-warning btn-lg">🧮 គណនាតម្លៃ</button>
   <div class="text-end mb-2">
     <label>បង្ហាញតម្លៃជា៖</label>
     <select id="displayCurrency" class="form-select d-inline-block w-auto">
@@ -808,7 +970,7 @@ body {
     </select>
   </div>
 
-  <h5 class="text-center text-primary mb-3">📋 តម្លៃទឹក-ភ្លើង (តែជួរដេក ១)</h5>
+ 
   <table class="table table-bordered table-striped">
     <thead class="table-dark">
       <tr>
@@ -860,11 +1022,11 @@ body {
       <div class="modal-body">
         <form id="calculatorForm">
           <div class="mb-3">
-            <label for="calcWater" class="form-label">ចំនួនទឹក</label>
+            
             <input type="number" id="calcWater" class="form-control" min="0" step="any" required placeholder="បញ្ចូលចំនួនទឹក" />
           </div>
           <div class="mb-3">
-            <label for="calcElectric" class="form-label">ចំនួនភ្លើង</label>
+            
             <input type="number" id="calcElectric" class="form-control" min="0" step="any" required placeholder="បញ្ចូលចំនួនភ្លើង" />
           </div>
           <div class="mb-3">
@@ -1530,6 +1692,24 @@ document.getElementById('save-customer-btn').addEventListener('click', updateCus
     `;
   }
 
+
+
+const banner = document.querySelector('.banner-exchange');
+
+banner.addEventListener('click', () => {
+  if (banner.style.animationPlayState === 'paused') {
+    banner.style.animationPlayState = 'running';
+  } else {
+    banner.style.animationPlayState = 'paused';
+  }
+});
+
+
+
+
+
+
+
   // Update banner
   function updateBanner(rate) {
     document.getElementById('exchange-rate-banner').textContent = Number(rate).toLocaleString();
@@ -1749,6 +1929,93 @@ document.getElementById('save-customer-btn').addEventListener('click', updateCus
   fetchExchangeRate();
 </script>
 
+<script>
+    const asianRates = [
+      { country: "Cambodia", currency: "KHR", flag: "https://flagcdn.com/w40/kh.png" },
+      { country: "Thailand", currency: "THB", flag: "https://flagcdn.com/w40/th.png" },
+      { country: "Vietnam", currency: "VND", flag: "https://flagcdn.com/w40/vn.png" },
+      { country: "Japan", currency: "JPY", flag: "https://flagcdn.com/w40/jp.png" },
+      { country: "South Korea", currency: "KRW", flag: "https://flagcdn.com/w40/kr.png" },
+      { country: "Laos", currency: "LAK", flag: "https://flagcdn.com/w40/la.png" },
+      { country: "China", currency: "CNY", flag: "https://flagcdn.com/w40/cn.png" },
+      { country: "Singapore", currency: "SGD", flag: "https://flagcdn.com/w40/sg.png" },
+      { country: "Malaysia", currency: "MYR", flag: "https://flagcdn.com/w40/my.png" },
+      { country: "India", currency: "INR", flag: "https://flagcdn.com/w40/in.png" }
+    ];
+
+    let currentIndex = 0;
+    let exchangeData = null;
+    const rateContainer = document.getElementById("rateContainer");
+
+    rateContainer.textContent = "កំពុងដំណើរការ...";
+
+    async function fetchRates() {
+      try {
+        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        if (!res.ok) throw new Error("Network error");
+        const data = await res.json();
+        exchangeData = data;
+        showNextRate();
+      } catch (e) {
+        console.error("Error fetching rates:", e);
+        rateContainer.textContent = "មិនអាចយកទិន្នន័យបាន";
+      }
+    }
+
+    function createRateContent(rateObj, value) {
+      return `
+        <span>${value.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${rateObj.currency}</span>
+        <img src="${rateObj.flag}" alt="${rateObj.country} flag" class="flag" title="${rateObj.country}" />
+      `;
+    }
+
+    let animating = false;
+
+    function showNextRate() {
+      if (!exchangeData || animating) return;
+
+      animating = true;
+      const rate = asianRates[currentIndex];
+      const value = exchangeData.rates[rate.currency];
+
+      rateContainer.classList.remove("show");
+      rateContainer.classList.add("hide");
+
+      setTimeout(() => {
+        if (value) {
+          rateContainer.innerHTML = createRateContent(rate, value);
+        } else {
+          rateContainer.textContent = "No data";
+        }
+
+        rateContainer.classList.remove("hide");
+        rateContainer.classList.add("show");
+
+        currentIndex = (currentIndex + 1) % asianRates.length;
+        animating = false;
+      }, 1600);
+    }
+
+    fetchRates();
+
+    setInterval(() => {
+      if (!exchangeData) {
+        fetchRates();
+      } else {
+        showNextRate();
+      }
+    }, 5000);
+
+    document.getElementById("exchangeButton").addEventListener("click", () => {
+      let list = "💱 អត្រាប្ដូរប្រាក់:\n\n";
+      asianRates.forEach(rate => {
+        const value = exchangeData?.rates[rate.currency];
+        const rateText = value ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "No data";
+        list += `- ${rate.country} (${rate.currency}): ${rateText}\n`;
+      });
+      alert(list);
+    });
+  </script>
 
 
 
