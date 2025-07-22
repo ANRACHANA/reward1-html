@@ -673,12 +673,12 @@ body {
     <form id="invoice-form" onsubmit="event.preventDefault(); saveData();">
 
       <div class="mb-3">
-        <label for="month" class="form-label">ខែ</label>
+        <label for="room" class="form-label">ជ្រើសរើសខែ</label>
         <input type="month" id="month" class="form-control" />
       </div>
 
       <div class="mb-3">
-  <label for="room" class="form-label">បន្ទប់</label>
+  
   <select id="room" class="form-select" onchange="autoFillCustomerInfo()">
     <option value="">-- ជ្រើសបន្ទប់ --</option>
     <option value="1">បន្ទប់ 1</option>
@@ -709,36 +709,35 @@ body {
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="water-old" class="form-label">ទឹកចាស់</label>
-          <input type="number" id="water-old" class="form-control" min="0" />
+         
+          <input type="number" id="water-old" class="form-control" min="0" required placeholder="បញ្ចូលចំនួនទឹកចាស់" />
         </div>
         <div class="col-md-6 mb-3">
-          <label for="water-new" class="form-label">ទឹកថ្មី</label>
-          <input type="number" id="water-new" class="form-control" min="0" />
+        
+          <input type="number" id="water-new" class="form-control" min="0" required placeholder="បញ្ចូលចំនួនទឹកថ្មី"/>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="electric-old" class="form-label">ភ្លើងចាស់</label>
-          <input type="number" id="electric-old" class="form-control" min="0" />
+          <input type="number" id="electric-old" class="form-control" min="0" required placeholder="បញ្ចូលចំនួនភ្លើងចាស់"/>
         </div>
         <div class="col-md-6 mb-3">
-          <label for="electric-new" class="form-label">ភ្លើងថ្មី</label>
-          <input type="number" id="electric-new" class="form-control" min="0" />
+        
+          <input type="number" id="electric-new" class="form-control" min="0" required placeholder="បញ្ចូលចំនួនភ្លើងថ្មី"/>
         </div>
       </div>
 
 
 
  <div class="mb-3" style="background-color: #e0f7fa; padding: 1px; border-radius: 1px;">
-  <label for="customer-name" class="form-label">ឈ្មោះអតិថិជន</label>
-  <input type="text" id="customer-name" class="form-control" readonly style="background-color: #b2ebf2;" />
+  
+  <input type="text" id="customer-name" class="form-control" readonly style="background-color: #b2ebf2;" required placeholder="ឈ្មោះអតិថិជន"/>
 </div>
 
 <div class="mb-3" style="background-color: #e0f7fa; padding: 1px; border-radius: 1px;">
-  <label for="customer-phone" class="form-label">លេខទូរស័ព្ទ</label>
-  <input type="text" id="customer-phone" class="form-control" readonly style="background-color: #b2ebf2;" />
+
+  <input type="text" id="customer-phone" class="form-control" readonly style="background-color: #b2ebf2;" required placeholder="លេខទូរស័ព្ទ"/>
 </div>
 
 
@@ -748,7 +747,7 @@ body {
 
 
 <div class="d-grid gap-2 ">
-         <button id="save-btn" onclick="saveData()" style="width:100%; padding:10px; font-size:12px; border:none; border-radius:12px; background:#1e88e5; color:white;">💾 រក្សាទុក</button>
+         <button id="save-btn" onclick="saveData()" style="width:100%; padding:10px; font-size:16px; border:none; border-radius:16px; background:#1e88e5; color:white;">💾 រក្សាទុក</button>
          <button  type="button" class="btn btn-outline-danger btn-justify-content-center" onclick="resetForm()" style="width:100%; padding:12px; font-size:12px; border:none; border-radius:6px; ">♻️ កំណត់ឡើងវិញ</button>
 
       </div>
@@ -833,7 +832,7 @@ body {
   <!-- Edit Form -->
   <div class=" mb-4">
     <div class="mb-3">
-      <label for="edit-room" class="form-label">ជ្រើសបន្ទប់</label>
+     
       <select id="edit-room" class="form-select" onchange="loadCustomerInfo()">
         <option value="">-- ជ្រើសបន្ទប់ --</option>
         <option value="1">បន្ទប់ 1</option>
@@ -844,13 +843,13 @@ body {
     </div>
 
     <div class="mb-3">
-      <label for="edit-customer-name" class="form-label">ឈ្មោះអតិថិជន</label>
-      <input type="text" id="edit-customer-name" class="form-control" />
+    
+      <input type="text" id="edit-customer-name" class="form-control" required placeholder="ឈ្មោះអតិថិជន"/>
     </div>
 
     <div class="mb-3">
-      <label for="edit-customer-phone" class="form-label">លេខទូរស័ព្ទ</label>
-      <input type="text" id="edit-customer-phone" class="form-control" />
+     
+      <input type="text" id="edit-customer-phone" class="form-control" required placeholder="លេខទូរស័ព្ទ"/>
     </div>
 
     <button class="btn btn-success d-flex align-items-center justify-content-center gap-2" id="save-customer-btn" onclick="updateCustomer()">
@@ -927,7 +926,7 @@ body {
   <h4 class="mb-4 text-center text-primary">⚡ កំណត់តម្លៃទឹក និង ភ្លើង (តែជួរដេក ១)</h4>
 
   <div class="mb-3">
-    <label for="exchangeRate" class="form-label">អត្រាប្ដូរ 1 USD = </label>
+    <label for="exchangeRate" class="form-label">អត្រាប្ដូរ 1 USD </label>
     <input type="number" id="exchangeRate" class="form-control" value="4000" min="1" step="any" />
   </div>
 
@@ -1067,15 +1066,13 @@ body {
 
 
 
-
 <!-- Loading Overlay -->
-<div id="loading-overlay" style="display: none;">
-  <div class="overlay-bg"></div>
-  <div class="overlay-content">
-    <div class="spinner"></div>
-    <div class="mt-3 text-white fs-5">⏳ កំពុងដំណើរការ....</div>
-  </div>
+<div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+     background: rgba(0, 0, 0, 0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-size: 1.2rem;">
+  <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem; border-width: 0.3rem;"></div>
+  <div class="mt-3 fs-5">⏳ កំពុងដំណើរការ....</div>
 </div>
+
 
 
 
@@ -1243,8 +1240,55 @@ async function register() {
 }
 
 function logout() {
-  auth.signOut().then(() => location.reload());
+  // ដំណើរការ logout
+  firebase.auth().signOut().then(() => {
+    // បង្ហាញ login form
+    document.getElementById("login-form").style.display = "block";
+
+    // លាក់ ☰ menu button
+    document.getElementById("menu-toggle").style.display = "none";
+
+    // លាក់ side menu បើបើក
+    document.getElementById("side-menu").style.left = "-250px";
+    document.getElementById("overlay").style.display = "none";
+  });
 }
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    // Show UI after login
+    document.getElementById('menu-toggle').style.display = 'block';
+  } else {
+    document.getElementById('menu-toggle').style.display = 'none';
+  }
+});
+ function checkLoginView() {
+    // បើមាន element login-view នៅក្នុង DOM => បង្ហាញ login page
+    const isLogin = document.getElementById("login-card") !== null;
+
+    // បើនៅលើ login page => លាក់ ☰
+    document.getElementById("menu-toggle").style.display = isLogin ? "none" : "block";
+  }
+
+  // ហៅពេលទំព័រចូលរួម
+  window.addEventListener("DOMContentLoaded", checkLoginView);
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ===== Invoice Section =====
 function resetForm() {
@@ -2015,8 +2059,37 @@ banner.addEventListener('click', () => {
       });
       alert(list);
     });
+
+
   </script>
 
+<style>
+  /* Spinner animation for browsers without bootstrap */
+  .spinner-border {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    vertical-align: text-bottom;
+    border: 0.3rem solid rgba(255, 255, 255, 0.25);
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+  }
+
+  @keyframes spinner-border {
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  // Example: Hide loading overlay after 2 seconds
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const overlay = document.getElementById('loading-overlay');
+      if (overlay) overlay.style.display = 'none';
+    }, 6000);
+  });
+</script>
 
 
 
